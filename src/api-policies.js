@@ -41,6 +41,14 @@ const APIPoliciesDemo = () => {
     }
   };
   
+  // PlainID background dot pattern styles
+  const dotPatternStyle = {
+    backgroundImage: `radial-gradient(${colors.primary.medium} 1.5px, transparent 1.5px), radial-gradient(${colors.primary.medium} 1.5px, transparent 1.5px)`,
+    backgroundSize: '20px 20px',
+    backgroundPosition: '0 0, 10px 10px',
+    opacity: 0.15
+  };
+  
   const steps = [
     { id: 'request', title: 'API Request' },
     { id: 'policy', title: 'Policy Summary' },
@@ -151,31 +159,15 @@ const APIPoliciesDemo = () => {
     return colors.secondary.medium;
   };
   
-  // PlainID background dot pattern styles
-  const dotPatternStyle = {
-    backgroundImage: `radial-gradient(${colors.primary.medium} 1.5px, transparent 1.5px), radial-gradient(${colors.primary.medium} 1.5px, transparent 1.5px)`,
-    backgroundSize: '20px 20px',
-    backgroundPosition: '0 0, 10px 10px',
-    opacity: 0.15
-  };
-
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-neutral-light to-primary-dark p-4 transition-all duration-300 relative overflow-hidden" style={{fontFamily: "'Roboto', sans-serif"}}>
       {/* PlainID dot grid pattern background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none" style={dotPatternStyle}></div>
       
-      <div className="text-center mb-8 relative z-10">
-        {/* PlainID Logo */}
-        <div className="flex justify-center mb-4">
-          <div className="bg-white/80 px-6 py-3 rounded-xl shadow-md">
-            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNzAgNzAiIGZpbGw9Im5vbmUiPgogICAgPGcgZmlsbD0iIzAwQTdCNSI+CiAgICAgICAgPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMTAiLz4KICAgICAgICA8cGF0aCBkPSJNMTUgMjVjMCAxMCAxMCAxNSAyNSAxNWgxOHYtN2gtMThjLTEwIDAtMTUtMy0xNS04VjI1eiIvPgogICAgICAgIDxwYXRoIGQ9Ik0yMCA1MHYtMTBjMC0xNSA3LTIwIDE1LTIwaDUwYzQgMCAxMSAxIDExIDh2MjJoLTEwVjMwYzAtMi0yLTMtNC0zaC0zNWMtMTAgMC0xNSA1LTE1IDEwdjEzaC0xMnoiLz4KICAgICAgICA8cGF0aCBkPSJNMjIwIDQ2LjVWMjcuNXYtNWgtOHY1djE5YzAgNCA0IDUuNSA4IDUuNWgyNXYtNi41aC0yMGMtMyAwLTUtMS01LTV6Iiž+CiAgICA8L2c+CiAgICA8cGF0aCBkPSJNMTIwIDI3LjV2MjNoOFYyOS41YzAtMS41IDEtMyAzLTNoMTJjMiAwIDMgMS41IDMgM3YyMWg4di0yM2MwLTUtNS03LjUtMTAtNy41aC0xNGMtNiAwLTEwIDIuNS0xMCA3LjV6IiBmaWxsPSIjMDAyQTNBIiAvPgogICAgPHBhdGggZD0iTTE2MCAyMnY2aDEwdjIyLjVoOFYyOGgxMHYtNnoiIGZpbGw9IiMwMDJBM0EiIC8+CiAgICA8cGF0aCBkPSJNMTk1IDQ0aC0xM3Y2LjVoMjNjNC41IDAgNi41LTIgNi41LTUuNXYtMjNoLTh2MjBjMCAyLTIgMi00IDJ6IiBmaWxsPSIjMDAyQTNBIiAvPgogICAgPHBhdGggZD0iTTI0MCAyMmwtMTEuNSAyOC41aDkuNWwxLjUtNCAxMiAuNSAxLjUgMy41aDkuNUwyNTEgMjJoLTExem0xLjUgMTkuNWwzLjUtMTAgMy41IDEwaC03eiIgZmlsbD0iIzAwQTdCNSIgLz4KPC9zdmc+" 
-              alt="PlainID Logo" 
-              className="h-10" />
-          </div>
-        </div>
-        
-        <div className="inline-flex items-center justify-center bg-white/60 backdrop-blur-sm py-3 px-6 rounded-xl shadow-lg mb-2 animate-pulse-slow">
-          <Shield className="mr-3 h-8 w-8" style={{color: colors.primary.default}} />
+      {/* Header - No logo, just title */}
+      <div className="text-center mb-10 relative z-10">
+        <div className="inline-flex items-center justify-center bg-white/60 backdrop-blur-sm py-4 px-7 rounded-xl shadow-lg animate-pulse-slow">
+          <Shield className="mr-3 h-9 w-9" style={{color: colors.primary.default}} />
           <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r" 
             style={{
               backgroundImage: `linear-gradient(to right, ${colors.primary.default}, ${colors.primary.dark})`,
@@ -185,7 +177,7 @@ const APIPoliciesDemo = () => {
             API Policies and Authorization
           </h1>
         </div>
-        <p className="mt-2 max-w-xl mx-auto" style={{color: colors.secondary.default, fontFamily: "'Roboto', sans-serif"}}>
+        <p className="mt-3 max-w-xl mx-auto" style={{color: colors.secondary.default, fontFamily: "'Roboto', sans-serif"}}>
           A visual API authorization flow for a Wealth Management firm
         </p>
       </div>
@@ -283,10 +275,11 @@ const APIPoliciesDemo = () => {
             height: '100%'
           }}></div>
         </div>
+        
         {activeStep === 0 && (
           <div className="space-y-6 animate-fadeIn">
             <h2 className="text-xl font-semibold text-slate-800 mb-4 flex items-center">
-              <User className="mr-2 h-6 w-6 text-indigo-600" />
+              <User className="mr-2 h-6 w-6" style={{color: colors.primary.default}} />
               Configure API Request
             </h2>
             
@@ -416,42 +409,42 @@ X-Actions: ${selectedActions.join(',')}`}
         {activeStep === 1 && (
           <div className="space-y-6 animate-fadeIn">
             <h2 className="text-xl font-semibold text-slate-800 mb-4 flex items-center">
-              <Lock className="mr-2 h-6 w-6 text-indigo-600" />
+              <Lock className="mr-2 h-6 w-6" style={{color: colors.primary.default}} />
               Policy Summary
             </h2>
             
             <div className="flex items-center justify-center my-8">
               <div className="relative">
-                <div className="w-72 h-72 rounded-full bg-indigo-100 flex items-center justify-center shadow-lg transition-all duration-500 transform hover:scale-105">
-                  <div className="w-56 h-56 rounded-full bg-indigo-200 flex items-center justify-center transition-all duration-500">
-                    <div className="w-40 h-40 rounded-full bg-indigo-300 flex items-center justify-center transition-all duration-500">
-                      <Lock className="h-20 w-20 text-indigo-800 animate-pulse" />
+                <div className="w-72 h-72 rounded-full bg-blue-100 flex items-center justify-center shadow-lg transition-all duration-500 transform hover:scale-105">
+                  <div className="w-56 h-56 rounded-full bg-blue-200 flex items-center justify-center transition-all duration-500">
+                    <div className="w-40 h-40 rounded-full bg-blue-300 flex items-center justify-center transition-all duration-500">
+                      <Lock className="h-20 w-20 text-blue-800 animate-pulse" />
                     </div>
                   </div>
                 </div>
                 
-                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-3 rounded-lg shadow-lg border border-indigo-200 transition-all duration-300 hover:shadow-xl">
+                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-3 rounded-lg shadow-lg border border-blue-200 transition-all duration-300 hover:shadow-xl">
                   <div className="flex items-center text-sm">
-                    <User className="mr-2 h-5 w-5 text-indigo-600" />
+                    <User className="mr-2 h-5 w-5 text-blue-600" />
                     <span className="font-medium">User: <strong>{selectedUser.name}</strong></span>
                   </div>
                 </div>
                 
-                <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 bg-white p-3 rounded-lg shadow-lg border border-indigo-200 transition-all duration-300 hover:shadow-xl">
+                <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 bg-white p-3 rounded-lg shadow-lg border border-blue-200 transition-all duration-300 hover:shadow-xl">
                   <div className="flex items-center text-sm">
                     <Key className="mr-2 h-5 w-5 text-emerald-600" />
                     <span className="font-medium">Actions: <strong>{selectedActions.join(', ')}</strong></span>
                   </div>
                 </div>
                 
-                <div className="absolute left-0 top-1/2 transform -translate-x-3/4 -translate-y-1/2 bg-white p-3 rounded-lg shadow-lg border border-indigo-200 transition-all duration-300 hover:shadow-xl">
+                <div className="absolute left-0 top-1/2 transform -translate-x-3/4 -translate-y-1/2 bg-white p-3 rounded-lg shadow-lg border border-blue-200 transition-all duration-300 hover:shadow-xl">
                   <div className="flex items-center text-sm">
                     <Database className="mr-2 h-5 w-5 text-violet-600" />
                     <span className="font-medium">Resource: <strong>{selectedResource}</strong></span>
                   </div>
                 </div>
                 
-                <div className="absolute right-0 top-1/2 transform translate-x-3/4 -translate-y-1/2 bg-white p-3 rounded-lg shadow-lg border border-indigo-200 transition-all duration-300 hover:shadow-xl">
+                <div className="absolute right-0 top-1/2 transform translate-x-3/4 -translate-y-1/2 bg-white p-3 rounded-lg shadow-lg border border-blue-200 transition-all duration-300 hover:shadow-xl">
                   <div className="flex items-center text-sm">
                     <Shield className="mr-2 h-5 w-5 text-red-600" />
                     <span className="font-medium">Role: <strong>{selectedUser.role}</strong></span>
@@ -462,11 +455,11 @@ X-Actions: ${selectedActions.join(',')}`}
             
             <div className="mt-6 p-4 bg-slate-50 rounded-lg border border-slate-200 shadow-md transition-all duration-300 hover:shadow-lg">
               <h3 className="font-medium text-slate-700 mb-3 flex items-center">
-                <Shield className="mr-2 h-5 w-5 text-indigo-700" />
+                <Shield className="mr-2 h-5 w-5 text-blue-700" />
                 Policy Rules Applied:
               </h3>
               <div className="space-y-3 max-w-3xl mx-auto">
-                <div className="p-3 bg-white rounded-lg border border-slate-100 flex items-center shadow-sm transition-all duration-300 hover:shadow-md hover:border-indigo-200">
+                <div className="p-3 bg-white rounded-lg border border-slate-100 flex items-center shadow-sm transition-all duration-300 hover:shadow-md hover:border-blue-200">
                   <div className="mr-3 text-violet-600 bg-violet-100 p-2 rounded-full">
                     <Users className="h-5 w-5" />
                   </div>
@@ -522,7 +515,7 @@ X-Actions: ${selectedActions.join(',')}`}
         {activeStep === 2 && (
           <div className="space-y-6 animate-fadeIn">
             <h2 className="text-xl font-semibold text-slate-800 mb-4 flex items-center">
-              <Shield className="mr-2 h-6 w-6 text-indigo-600" />
+              <Shield className="mr-2 h-6 w-6" style={{color: colors.primary.default}} />
               Authorization Decision
             </h2>
             
@@ -617,21 +610,21 @@ X-Actions: ${selectedActions.join(',')}`}
         {activeStep === 3 && (
           <div className="space-y-6 animate-fadeIn">
             <h2 className="text-xl font-semibold text-slate-800 mb-4 flex items-center">
-              <Server className="mr-2 h-6 w-6 text-indigo-600" />
+              <Server className="mr-2 h-6 w-6" style={{color: colors.primary.default}} />
               API Response
             </h2>
             
             <div className="flex justify-center">
               <div className="max-w-2xl w-full space-y-4">
                 <div className="flex items-center space-x-4 mb-6">
-                  <div className="flex-shrink-0 bg-indigo-100 p-3 rounded-full shadow-md transition-all duration-300 transform hover:scale-110">
-                    <Globe className="h-10 w-10 text-indigo-600" />
+                  <div className="flex-shrink-0 bg-blue-100 p-3 rounded-full shadow-md transition-all duration-300 transform hover:scale-110">
+                    <Globe className="h-10 w-10 text-blue-600" />
                   </div>
                   <div className="flex-grow relative">
-                    <div className="h-3 bg-indigo-200 rounded-full shadow-inner overflow-hidden">
+                    <div className="h-3 bg-blue-200 rounded-full shadow-inner overflow-hidden">
                       <div 
                         className={`h-full rounded-full transition-all duration-1000 ease-in-out ${
-                          authorization?.overall ? 'bg-indigo-600 w-full' : 'bg-red-500 w-1/4'
+                          authorization?.overall ? 'bg-blue-600 w-full' : 'bg-red-500 w-1/4'
                         }`}
                       ></div>
                       <div 
