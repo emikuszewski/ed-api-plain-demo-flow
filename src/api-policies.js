@@ -761,9 +761,16 @@ X-Actions: ${selectedActions.join(',')}`}
           disabled={activeStep === 0}
           className={`px-6 py-3 rounded-xl shadow flex items-center transition-all duration-300 ${
             activeStep === 0 
-              ? 'bg-slate-200 text-slate-400 cursor-not-allowed border border-slate-300/50' 
-              : 'bg-white text-indigo-800 hover:bg-indigo-100 hover:shadow-md border border-indigo-200 hover:border-indigo-300'
+              ? 'cursor-not-allowed border' 
+              : 'bg-white hover:shadow-md border hover:border-opacity-100'
           }`}
+          style={{ 
+            backgroundColor: activeStep === 0 ? colors.secondary.light : 'white',
+            color: activeStep === 0 ? colors.secondary.medium : colors.primary.default, 
+            borderColor: activeStep === 0 ? colors.secondary.medium + '50' : colors.primary.default + '50',
+            fontFamily: "'Roboto', sans-serif",
+            fontWeight: 500 // Roboto Medium per guidelines
+          }}
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
             <path fillRule="evenodd" d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L7.414 9H15a1 1 0 110 2H7.414l2.293 2.293a1 1 0 010 1.414z" clipRule="evenodd" />
@@ -777,9 +784,13 @@ X-Actions: ${selectedActions.join(',')}`}
               <div 
                 key={index}
                 className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                  index === activeStep ? 'bg-indigo-600 scale-125' : 
-                  index < activeStep ? 'bg-emerald-500' : 'bg-slate-300'
+                  index === activeStep ? 'scale-125' : ''
                 }`}
+                style={{
+                  backgroundColor: index === activeStep ? colors.primary.default : 
+                                  index < activeStep ? colors.success.default : 
+                                  colors.secondary.medium
+                }}
               ></div>
             ))}
           </div>
@@ -787,7 +798,12 @@ X-Actions: ${selectedActions.join(',')}`}
         
         <button
           onClick={handleNext}
-          className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white rounded-xl shadow-lg hover:shadow-indigo-500/30 hover:from-indigo-500 hover:to-indigo-600 flex items-center transition-all duration-300 transform hover:translate-y-[-2px] font-medium"
+          className="px-6 py-3 text-white rounded-xl shadow-lg hover:shadow-lg flex items-center transition-all duration-300 transform hover:translate-y-[-2px]"
+          style={{
+            background: `linear-gradient(to right, ${colors.primary.default}, ${colors.primary.dark})`,
+            fontFamily: "'Roboto', sans-serif",
+            fontWeight: 500 // Roboto Medium per guidelines
+          }}
         >
           {activeStep === steps.length - 1 ? (
             <>
