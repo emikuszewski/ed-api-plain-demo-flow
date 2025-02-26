@@ -532,7 +532,7 @@ X-Actions: ${selectedActions.join(',')}`}
           onClick={handleNext}
           className="px-5 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 flex items-center"
         >
-          {activeStep === steps.length - 1 ? 'Restart Demo' : 'Next Step'}
+          {activeStep === steps.length - 1 ? 'Restart Flow' : 'Next Step'}
           {activeStep !== steps.length - 1 && (
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
               <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
