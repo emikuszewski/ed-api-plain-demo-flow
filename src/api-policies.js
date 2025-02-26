@@ -152,66 +152,94 @@ const APIPoliciesDemo = () => {
   };
   
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-br from-slate-50 to-indigo-50 p-4 transition-all duration-300">
-      <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-indigo-800 flex items-center justify-center">
-          <Shield className="mr-3 h-8 w-8 text-indigo-600" />
-          API Policies and Authorization
-        </h1>
-        <p className="text-slate-600 mt-2">A visual API authorization flow for a Wealth Management firm</p>
+    <div className="flex flex-col min-h-screen bg-gradient-to-br from-slate-50 to-indigo-50 p-4 transition-all duration-300 relative overflow-hidden">
+      {/* Background decoration */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 left-0 w-full h-full opacity-10">
+          <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-indigo-400 animate-float" style={{animationDelay: "0.5s"}}></div>
+          <div className="absolute bottom-1/4 right-1/3 w-80 h-80 rounded-full bg-violet-400 animate-float" style={{animationDelay: "1.2s"}}></div>
+          <div className="absolute top-1/3 right-1/4 w-40 h-40 rounded-full bg-emerald-400 animate-float" style={{animationDelay: "0.8s"}}></div>
+        </div>
       </div>
       
-      {/* Improved progress steps */}
-      <div className="mb-8 w-full">
-        <div className="grid grid-cols-4 gap-2">
-          {steps.map((step, index) => (
-            <div key={step.id} className="flex flex-col items-center">
-              <div 
-                className={`h-12 w-12 rounded-full flex items-center justify-center shadow-md transform transition-all duration-300 ease-in-out ${
-                  index === activeStep ? 'scale-110' : ''
-                }`}
-                style={{ 
-                  backgroundColor: getStepBgColor(index),
-                  color: index <= activeStep ? 'white' : 'rgb(30, 41, 59)',
-                  boxShadow: index === activeStep ? '0 0 15px rgba(79, 70, 229, 0.5)' : ''
-                }}
-              >
-                {index < activeStep ? (
-                  <Check size={24} />
-                ) : (
-                  <span style={{ fontSize: "20px" }}>{index + 1}</span>
-                )}
-              </div>
-              
-              {/* Progress connector */}
-              {index < steps.length - 1 && (
-                <div className="hidden md:block absolute h-0.5 bg-gray-200 w-full" 
-                  style={{ 
-                    left: `calc(${(index * 100) / (steps.length - 1)}% - 10%)`,
-                    width: '20%',
-                    top: '6%',
-                    zIndex: 0 
-                  }}>
-                  <div className="h-full transition-all duration-500 ease-in-out"
+      <div className="text-center mb-8 relative z-10">
+        <div className="inline-flex items-center justify-center bg-white/60 backdrop-blur-sm py-3 px-6 rounded-xl shadow-lg mb-2 animate-pulse-slow">
+          <Shield className="mr-3 h-8 w-8 text-indigo-600" />
+          <h1 className="text-3xl font-bold text-indigo-800 bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-violet-600">
+            API Policies and Authorization
+          </h1>
+        </div>
+        <p className="text-slate-600 mt-2 max-w-xl mx-auto">A visual API authorization flow for a Wealth Management firm</p>
+      </div>
+      
+      {/* Refined progress steps */}
+      <div className="mb-12 w-full relative z-10">
+        <div className="glass-effect py-5 px-8 rounded-2xl mb-5 shadow-lg">
+          <div className="grid grid-cols-4 gap-2 relative">
+            {/* Progress connector line */}
+            <div className="absolute top-6 left-0 w-full h-0.5 bg-slate-200"></div>
+            
+            {steps.map((step, index) => (
+              <div key={step.id} className="flex flex-col items-center relative">
+                {/* Completed progress line */}
+                {index > 0 && (
+                  <div className="absolute top-6 right-1/2 h-0.5 transition-all duration-1000 ease-in-out" 
                     style={{ 
-                      width: index < activeStep ? '100%' : '0%',
-                      backgroundColor: colors.success.default 
-                    }}></div>
-                </div>
-              )}
+                      width: index <= activeStep ? '100%' : '0%',
+                      backgroundColor: colors.success.default,
+                      zIndex: 1,
+                      left: '-50%'
+                    }}>
+                  </div>
+                )}
               
-              <div className="text-sm mt-2 text-center font-medium text-slate-700">{step.title}</div>
-            </div>
-          ))}
+                {/* Step circle */}
+                <div 
+                  className={`h-12 w-12 rounded-full flex items-center justify-center shadow-lg transform transition-all duration-500 ease-in-out z-10 ${
+                    index === activeStep ? 'scale-110' : ''
+                  }`}
+                  style={{ 
+                    backgroundColor: getStepBgColor(index),
+                    color: index <= activeStep ? 'white' : 'rgb(30, 41, 59)',
+                    boxShadow: index === activeStep ? '0 0 20px rgba(79, 70, 229, 0.7)' : ''
+                  }}
+                >
+                  {index < activeStep ? (
+                    <Check size={24} className="animate-fadeIn" />
+                  ) : (
+                    <span className="font-semibold" style={{ fontSize: "18px" }}>{index + 1}</span>
+                  )}
+                  
+                  {/* Ripple effect for active step */}
+                  {index === activeStep && (
+                    <div className="absolute inset-0 rounded-full animate-ping opacity-40" 
+                      style={{ backgroundColor: colors.primary.default }}></div>
+                  )}
+                </div>
+                
+                <div className="text-sm mt-3 text-center font-medium text-slate-700">
+                  <span className={`inline-block transition-all duration-300 ${
+                    index === activeStep ? 'transform translate-y-0 text-indigo-700 font-semibold' : 
+                    index < activeStep ? 'text-emerald-600' : 'opacity-70'
+                  }`}>
+                    {step.title}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
       
       <div 
-        className={`bg-white rounded-xl shadow-xl p-6 mb-6 flex-grow border border-indigo-100 transition-all duration-500 ease-in-out ${
+        className={`glass-effect rounded-xl shadow-2xl p-8 mb-6 flex-grow border border-white/20 transition-all duration-500 ease-in-out relative z-10 ${
           animateTransition ? 'opacity-0 transform translate-y-4' : 'opacity-100 transform translate-y-0'
         }`}
         style={{ backdropFilter: 'blur(12px)' }}
       >
+        {/* Card decoration */}
+        <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-indigo-500/10 to-violet-500/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl pointer-events-none"></div>
+        <div className="absolute bottom-0 left-0 w-40 h-40 bg-gradient-to-tr from-emerald-500/10 to-indigo-500/10 rounded-full translate-y-1/2 -translate-x-1/2 blur-2xl pointer-events-none"></div>
         {activeStep === 0 && (
           <div className="space-y-6 animate-fadeIn">
             <h2 className="text-xl font-semibold text-slate-800 mb-4 flex items-center">
@@ -219,92 +247,125 @@ const APIPoliciesDemo = () => {
               Configure API Request
             </h2>
             
-            <div className="grid md:grid-cols-3 gap-6">
-              <div className="bg-indigo-50 p-4 rounded-xl border border-indigo-200 shadow-sm transition-all duration-300 hover:shadow-md">
-                <h3 className="font-medium text-indigo-800 mb-3 flex items-center">
-                  <User className="mr-2 h-5 w-5" />
-                  Select User
+            <div className="grid md:grid-cols-3 gap-8">
+              <div className="bg-gradient-to-br from-indigo-50 to-indigo-100/50 p-5 rounded-xl border border-indigo-200/50 shadow-sm transition-all duration-300 hover:shadow-lg group">
+                <h3 className="font-medium text-indigo-800 mb-4 flex items-center">
+                  <div className="bg-indigo-100 p-2 rounded-lg shadow-sm group-hover:bg-indigo-200 transition-all duration-300 mr-3">
+                    <User className="h-5 w-5 text-indigo-600" />
+                  </div>
+                  <span className="text-base">Select User</span>
                 </h3>
-                <div className="space-y-2">
+                <div className="space-y-3">
                   {users.map(user => (
                     <div 
                       key={user.id}
                       onClick={() => setSelectedUser(user)}
-                      className={`cursor-pointer p-3 rounded-lg transition-all duration-300 transform ${
+                      className={`cursor-pointer p-4 rounded-lg transition-all duration-300 transform ${
                         selectedUser.id === user.id 
-                          ? 'bg-indigo-200 border-l-4 border-indigo-600 shadow-md translate-x-1' 
-                          : 'bg-white hover:bg-indigo-100 hover:translate-x-1'
+                          ? 'bg-indigo-200/80 border-l-4 border-indigo-600 shadow-md translate-x-1' 
+                          : 'bg-white/80 hover:bg-indigo-100/60 hover:translate-x-1 hover:shadow-md'
                       }`}
                     >
-                      <div className="font-medium">{user.name}</div>
-                      <div className="text-sm text-slate-600">Role: <span className="font-medium">{user.role}</span></div>
+                      <div className="font-medium text-indigo-900">{user.name}</div>
+                      <div className="text-sm text-slate-600 mt-1">
+                        Role: <span className={`font-medium inline-block px-2 py-0.5 rounded ${
+                          user.role === 'Administrator' ? 'bg-red-100 text-red-700' : 
+                          user.role === 'Wealth Manager' ? 'bg-purple-100 text-purple-700' : 
+                          'bg-blue-100 text-blue-700'
+                        }`}>{user.role}</span>
+                      </div>
                     </div>
                   ))}
                 </div>
               </div>
               
-              <div className="bg-violet-50 p-4 rounded-xl border border-violet-200 shadow-sm transition-all duration-300 hover:shadow-md">
-                <h3 className="font-medium text-violet-800 mb-3 flex items-center">
-                  <Database className="mr-2 h-5 w-5" />
-                  Select Resource
+              <div className="bg-gradient-to-br from-violet-50 to-violet-100/50 p-5 rounded-xl border border-violet-200/50 shadow-sm transition-all duration-300 hover:shadow-lg group">
+                <h3 className="font-medium text-violet-800 mb-4 flex items-center">
+                  <div className="bg-violet-100 p-2 rounded-lg shadow-sm group-hover:bg-violet-200 transition-all duration-300 mr-3">
+                    <Database className="h-5 w-5 text-violet-600" />
+                  </div>
+                  <span className="text-base">Select Resource</span>
                 </h3>
-                <div className="space-y-2">
+                <div className="space-y-3">
                   {resources.map(resource => (
                     <div 
                       key={resource.id}
                       onClick={() => setSelectedResource(resource.id)}
-                      className={`cursor-pointer p-3 rounded-lg flex items-center transition-all duration-300 transform ${
+                      className={`cursor-pointer p-4 rounded-lg flex items-center transition-all duration-300 transform ${
                         selectedResource === resource.id 
-                          ? 'bg-violet-200 border-l-4 border-violet-600 shadow-md translate-x-1' 
-                          : 'bg-white hover:bg-violet-100 hover:translate-x-1'
+                          ? 'bg-violet-200/80 border-l-4 border-violet-600 shadow-md translate-x-1' 
+                          : 'bg-white/80 hover:bg-violet-100/60 hover:translate-x-1 hover:shadow-md'
                       }`}
                     >
-                      <div className="mr-2 text-violet-700">{resource.icon}</div>
-                      <div className="font-medium">{resource.name}</div>
+                      <div className={`mr-3 bg-violet-100 p-2 rounded-lg ${
+                        selectedResource === resource.id ? 'bg-violet-200' : ''
+                      }`}>
+                        {resource.icon}
+                      </div>
+                      <div className="font-medium text-violet-900">{resource.name}</div>
                     </div>
                   ))}
                 </div>
               </div>
               
-              <div className="bg-emerald-50 p-4 rounded-xl border border-emerald-200 shadow-sm transition-all duration-300 hover:shadow-md">
-                <h3 className="font-medium text-emerald-800 mb-3 flex items-center">
-                  <Key className="mr-2 h-5 w-5" />
-                  Select Actions (Multiple)
+              <div className="bg-gradient-to-br from-emerald-50 to-emerald-100/50 p-5 rounded-xl border border-emerald-200/50 shadow-sm transition-all duration-300 hover:shadow-lg group">
+                <h3 className="font-medium text-emerald-800 mb-4 flex items-center">
+                  <div className="bg-emerald-100 p-2 rounded-lg shadow-sm group-hover:bg-emerald-200 transition-all duration-300 mr-3">
+                    <Key className="h-5 w-5 text-emerald-600" />
+                  </div>
+                  <span className="text-base">Select Actions</span>
                 </h3>
-                <div className="space-y-2">
+                <div className="space-y-3">
                   {actions.map(action => (
                     <div 
                       key={action}
                       onClick={() => toggleAction(action)}
-                      className={`cursor-pointer p-3 rounded-lg flex items-center transition-all duration-300 transform ${
+                      className={`cursor-pointer p-4 rounded-lg flex items-center transition-all duration-300 transform ${
                         selectedActions.includes(action) 
-                          ? 'bg-emerald-200 border-l-4 border-emerald-600 shadow-md translate-x-1' 
-                          : 'bg-white hover:bg-emerald-100 hover:translate-x-1'
+                          ? 'bg-emerald-200/80 border-l-4 border-emerald-600 shadow-md translate-x-1' 
+                          : 'bg-white/80 hover:bg-emerald-100/60 hover:translate-x-1 hover:shadow-md'
                       }`}
                     >
-                      <div className={`w-5 h-5 rounded border mr-2 flex items-center justify-center transition-all duration-300 ${
-                        selectedActions.includes(action) ? 'bg-emerald-600 border-emerald-600' : 'border-slate-400'
+                      <div className={`w-6 h-6 rounded-md border mr-3 flex items-center justify-center transition-all duration-300 ${
+                        selectedActions.includes(action) ? 'bg-emerald-600 border-emerald-600 scale-110' : 'border-slate-400'
                       }`}>
                         {selectedActions.includes(action) && <Check className="h-4 w-4 text-white" />}
                       </div>
-                      <div className="font-medium">{action}</div>
+                      <div className="font-medium text-emerald-900">{action}</div>
                     </div>
                   ))}
                 </div>
               </div>
             </div>
             
-            <div className="mt-4 p-4 bg-slate-50 rounded-xl border border-slate-200 shadow-sm transition-all duration-300 hover:shadow-md">
-              <h3 className="font-medium text-slate-700 mb-2 flex items-center">
-                <Globe className="mr-2 h-5 w-5 text-indigo-600" />
-                API Request Preview:
+            <div className="mt-8 bg-gradient-to-r from-slate-800 to-slate-900 p-6 rounded-xl border border-slate-700 shadow-lg transition-all duration-300 hover:shadow-xl">
+              <h3 className="font-medium text-white mb-4 flex items-center">
+                <div className="bg-slate-700 p-2 rounded-lg shadow-md mr-3">
+                  <Globe className="h-5 w-5 text-indigo-400" />
+                </div>
+                API Request Preview
               </h3>
-              <pre className="bg-slate-900 text-emerald-400 p-4 rounded-lg overflow-x-auto text-sm shadow-inner">
+              <div className="flex space-x-2 mb-2">
+                <span className="inline-block w-3 h-3 rounded-full bg-red-500"></span>
+                <span className="inline-block w-3 h-3 rounded-full bg-yellow-500"></span>
+                <span className="inline-block w-3 h-3 rounded-full bg-green-500"></span>
+              </div>
+              <div className="bg-slate-950 rounded-lg overflow-hidden shadow-inner">
+                <div className="bg-slate-800 px-4 py-2 text-xs text-slate-400 border-b border-slate-700">
+                  request.http
+                </div>
+                <pre className="text-emerald-400 p-5 overflow-x-auto text-sm font-mono">
 {`GET /api/${selectedResource}
 Authorization: Bearer jwt.token.here
 X-User-ID: ${selectedUser.id}
+X-User-Role: ${selectedUser.role}
 X-Actions: ${selectedActions.join(',')}`}
-              </pre>
+                </pre>
+              </div>
+              <div className="flex justify-between mt-3">
+                <div className="text-xs text-slate-400">Authorization API • v2.3.1</div>
+                <div className="text-xs text-slate-400">Wealth Management Platform</div>
+              </div>
             </div>
           </div>
         )}
@@ -642,31 +703,58 @@ X-Actions: ${selectedActions.join(',')}`}
         )}
       </div>
       
-      <div className="flex justify-between mt-6">
+      <div className="flex justify-between mt-8 relative z-10">
         <button
           onClick={handleBack}
           disabled={activeStep === 0}
-          className={`px-5 py-2 rounded-lg shadow flex items-center transition-all duration-300 ${
+          className={`px-6 py-3 rounded-xl shadow flex items-center transition-all duration-300 ${
             activeStep === 0 
-              ? 'bg-slate-200 text-slate-400 cursor-not-allowed' 
-              : 'bg-indigo-100 text-indigo-800 hover:bg-indigo-200 hover:shadow-md'
+              ? 'bg-slate-200 text-slate-400 cursor-not-allowed border border-slate-300/50' 
+              : 'bg-white text-indigo-800 hover:bg-indigo-100 hover:shadow-md border border-indigo-200 hover:border-indigo-300'
           }`}
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
             <path fillRule="evenodd" d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L7.414 9H15a1 1 0 110 2H7.414l2.293 2.293a1 1 0 010 1.414z" clipRule="evenodd" />
           </svg>
-          Back
+          <span className="font-medium">Back</span>
         </button>
+        
+        <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
+          <div className="flex space-x-2">
+            {steps.map((_, index) => (
+              <div 
+                key={index}
+                className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                  index === activeStep ? 'bg-indigo-600 scale-125' : 
+                  index < activeStep ? 'bg-emerald-500' : 'bg-slate-300'
+                }`}
+              ></div>
+            ))}
+          </div>
+        </div>
+        
         <button
           onClick={handleNext}
-          className="px-5 py-2 bg-indigo-600 text-white rounded-lg shadow hover:bg-indigo-700 hover:shadow-lg flex items-center transition-all duration-300 transform hover:translate-y-[-2px]"
+          className="px-6 py-3 bg-gradient-to-r from-indigo-600 to-indigo-700 text-white rounded-xl shadow-lg hover:shadow-indigo-500/30 hover:from-indigo-500 hover:to-indigo-600 flex items-center transition-all duration-300 transform hover:translate-y-[-2px] font-medium"
         >
-          {activeStep === steps.length - 1 ? 'Restart Flow' : 'Next Step'}
-          {activeStep !== steps.length - 1 && (
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
-            </svg>
+          {activeStep === steps.length - 1 ? (
+            <>
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clipRule="evenodd" />
+              </svg>
+              Restart Flow
+            </>
+          ) : (
+            <>
+              Next Step
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
+              </svg>
+            </>
           )}
+          
+          {/* Add subtle glow effect to button */}
+          <div className="absolute inset-0 rounded-xl bg-white opacity-20 blur-xl animate-pulse-slow -z-10"></div>
         </button>
       </div>
     </div>
