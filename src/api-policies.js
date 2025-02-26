@@ -15,8 +15,8 @@ const APIPoliciesDemo = () => {
   
   const users = [
     { id: 1, name: 'Michael Chen', role: 'Administrator', permissions: ['READ', 'WRITE', 'DELETE', 'CREATE', 'UPDATE'] },
-    { id: 2, name: 'Sarah Johnson', role: 'User', permissions: ['READ'] },
-    { id: 3, name: 'Raj Patel', role: 'Finance', permissions: ['READ', 'WRITE', 'CREATE', 'UPDATE'] }
+    { id: 2, name: 'Raj Patel', role: 'User', permissions: ['READ'] },
+    { id: 3, name: 'Sara Jameson (Wealth Manager)', role: 'Finance', permissions: ['READ', 'WRITE', 'CREATE', 'UPDATE'] }
   ];
   
   const [selectedUser, setSelectedUser] = useState(users[0]);
