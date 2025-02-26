@@ -88,7 +88,7 @@ const APIPoliciesDemo = () => {
   
   const resources = [
     { id: 'customer-data', name: 'Customer Data', icon: <Users size={20} /> },
-    { id: 'financial-records', name: 'Financial Records', icon: <Database size={20} /> },
+    { id: 'financial-records', name: 'Accounts', icon: <Database size={20} /> },
     { id: 'system-settings', name: 'System Settings', icon: <Server size={20} /> }
   ];
   
@@ -516,7 +516,7 @@ X-Actions: ${selectedActions.join(',')}`}
                       <AlertCircle className="h-5 w-5" />
                     </div>
                     <div className="text-sm">
-                      <strong>Special Policy:</strong> Financial Records require Wealth Manager or Administrator role
+                      <strong>Special Policy:</strong> Accounts require Wealth Manager or Administrator role
                     </div>
                   </div>
                 )}
