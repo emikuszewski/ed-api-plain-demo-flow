@@ -1,10 +1,45 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Shield, Lock, Key, User, Users, Database, Check, X, AlertCircle, Server, Globe } from 'lucide-react';
 
 const APIPoliciesDemo = () => {
   const [activeStep, setActiveStep] = useState(0);
   const [showDecision, setShowDecision] = useState(false);
   const [authorization, setAuthorization] = useState(null);
+  const [animateTransition, setAnimateTransition] = useState(false);
+  
+  // Modern color palette
+  const colors = {
+    primary: {
+      light: '#EEF2FF', // indigo-50
+      medium: '#818CF8', // indigo-400
+      default: '#4F46E5', // indigo-600
+      dark: '#3730A3', // indigo-800
+    },
+    secondary: {
+      light: '#F5F3FF', // violet-50
+      medium: '#A78BFA', // violet-400
+      default: '#7C3AED', // violet-600
+      dark: '#5B21B6', // violet-800
+    },
+    success: {
+      light: '#ECFDF5', // emerald-50
+      medium: '#34D399', // emerald-400
+      default: '#10B981', // emerald-500
+      dark: '#065F46', // emerald-800
+    },
+    danger: {
+      light: '#FEF2F2', // red-50
+      medium: '#F87171', // red-400
+      default: '#EF4444', // red-500
+      dark: '#991B1B', // red-800
+    },
+    neutral: {
+      light: '#F8FAFC', // slate-50
+      medium: '#94A3B8', // slate-400
+      default: '#64748B', // slate-500
+      dark: '#1E293B', // slate-800
+    }
+  };
   
   const steps = [
     { id: 'request', title: 'API Request' },
@@ -22,6 +57,16 @@ const APIPoliciesDemo = () => {
   const [selectedUser, setSelectedUser] = useState(users[0]);
   const [selectedResource, setSelectedResource] = useState('customer-data');
   const [selectedActions, setSelectedActions] = useState(['READ']);
+  
+  useEffect(() => {
+    // Add transition animation when changing steps
+    if (animateTransition) {
+      const timer = setTimeout(() => {
+        setAnimateTransition(false);
+      }, 400);
+      return () => clearTimeout(timer);
+    }
+  }, [animateTransition]);
   
   const toggleAction = (action) => {
     if (selectedActions.includes(action)) {
@@ -71,6 +116,8 @@ const APIPoliciesDemo = () => {
   };
   
   const handleNext = () => {
+    setAnimateTransition(true);
+    
     if (activeStep === 1) {
       evaluateAccess();
     }
@@ -85,6 +132,8 @@ const APIPoliciesDemo = () => {
   };
   
   const handleBack = () => {
+    setAnimateTransition(true);
+    
     if (activeStep > 0) {
       setActiveStep(activeStep - 1);
       if (activeStep === 3) {
@@ -94,49 +143,85 @@ const APIPoliciesDemo = () => {
       }
     }
   };
+
+  // Get the background color based on step index  
+  const getStepBgColor = (index) => {
+    if (index === activeStep) return colors.primary.default;
+    if (index < activeStep) return colors.success.default;
+    return colors.neutral.medium;
+  };
   
   return (
-    <div className="flex flex-col min-h-screen bg-blue-50 p-4">
+    <div className="flex flex-col min-h-screen bg-gradient-to-br from-slate-50 to-indigo-50 p-4 transition-all duration-300">
       <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-blue-800 flex items-center justify-center">
-          <Shield className="mr-3 h-8 w-8 text-blue-600" />
-          API Policies and PlainID Authorization
+        <h1 className="text-3xl font-bold text-indigo-800 flex items-center justify-center">
+          <Shield className="mr-3 h-8 w-8 text-indigo-600" />
+          API Policies and Authorization
         </h1>
-        <p className="text-gray-600 mt-2">A visual API authorization flow for a Wealth Management firm</p>
+        <p className="text-slate-600 mt-2">A visual API authorization flow for a Wealth Management firm</p>
       </div>
       
-      {/* Simplified progress steps */}
+      {/* Improved progress steps */}
       <div className="mb-8 w-full">
         <div className="grid grid-cols-4 gap-2">
           {steps.map((step, index) => (
             <div key={step.id} className="flex flex-col items-center">
-              <div className={`h-12 w-12 rounded-full flex items-center justify-center ${
-                index === activeStep ? 'bg-blue-600 text-white' : 
-                index < activeStep ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-500'
-              }`}>
+              <div 
+                className={`h-12 w-12 rounded-full flex items-center justify-center shadow-md transform transition-all duration-300 ease-in-out ${
+                  index === activeStep ? 'scale-110' : ''
+                }`}
+                style={{ 
+                  backgroundColor: getStepBgColor(index),
+                  color: index <= activeStep ? 'white' : 'rgb(30, 41, 59)',
+                  boxShadow: index === activeStep ? '0 0 15px rgba(79, 70, 229, 0.5)' : ''
+                }}
+              >
                 {index < activeStep ? (
                   <Check size={24} />
                 ) : (
                   <span style={{ fontSize: "20px" }}>{index + 1}</span>
                 )}
               </div>
-              <div className="text-sm mt-2 text-center">{step.title}</div>
+              
+              {/* Progress connector */}
+              {index < steps.length - 1 && (
+                <div className="hidden md:block absolute h-0.5 bg-gray-200 w-full" 
+                  style={{ 
+                    left: `calc(${(index * 100) / (steps.length - 1)}% - 10%)`,
+                    width: '20%',
+                    top: '6%',
+                    zIndex: 0 
+                  }}>
+                  <div className="h-full transition-all duration-500 ease-in-out"
+                    style={{ 
+                      width: index < activeStep ? '100%' : '0%',
+                      backgroundColor: colors.success.default 
+                    }}></div>
+                </div>
+              )}
+              
+              <div className="text-sm mt-2 text-center font-medium text-slate-700">{step.title}</div>
             </div>
           ))}
         </div>
       </div>
       
-      <div className="bg-white rounded-lg shadow-lg p-6 mb-6 flex-grow border border-blue-100">
+      <div 
+        className={`bg-white rounded-xl shadow-xl p-6 mb-6 flex-grow border border-indigo-100 transition-all duration-500 ease-in-out ${
+          animateTransition ? 'opacity-0 transform translate-y-4' : 'opacity-100 transform translate-y-0'
+        }`}
+        style={{ backdropFilter: 'blur(12px)' }}
+      >
         {activeStep === 0 && (
-          <div className="space-y-6">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
-              <User className="mr-2 h-6 w-6 text-blue-600" />
+          <div className="space-y-6 animate-fadeIn">
+            <h2 className="text-xl font-semibold text-slate-800 mb-4 flex items-center">
+              <User className="mr-2 h-6 w-6 text-indigo-600" />
               Configure API Request
             </h2>
             
             <div className="grid md:grid-cols-3 gap-6">
-              <div className="bg-blue-50 p-4 rounded-lg border border-blue-200 shadow-sm">
-                <h3 className="font-medium text-blue-800 mb-3 flex items-center">
+              <div className="bg-indigo-50 p-4 rounded-xl border border-indigo-200 shadow-sm transition-all duration-300 hover:shadow-md">
+                <h3 className="font-medium text-indigo-800 mb-3 flex items-center">
                   <User className="mr-2 h-5 w-5" />
                   Select User
                 </h3>
@@ -145,19 +230,21 @@ const APIPoliciesDemo = () => {
                     <div 
                       key={user.id}
                       onClick={() => setSelectedUser(user)}
-                      className={`cursor-pointer p-3 rounded ${
-                        selectedUser.id === user.id ? 'bg-blue-200 border-l-4 border-blue-600 shadow-sm' : 'bg-white hover:bg-blue-50'
+                      className={`cursor-pointer p-3 rounded-lg transition-all duration-300 transform ${
+                        selectedUser.id === user.id 
+                          ? 'bg-indigo-200 border-l-4 border-indigo-600 shadow-md translate-x-1' 
+                          : 'bg-white hover:bg-indigo-100 hover:translate-x-1'
                       }`}
                     >
                       <div className="font-medium">{user.name}</div>
-                      <div className="text-sm text-gray-600">Role: <span className="font-medium">{user.role}</span></div>
+                      <div className="text-sm text-slate-600">Role: <span className="font-medium">{user.role}</span></div>
                     </div>
                   ))}
                 </div>
               </div>
               
-              <div className="bg-purple-50 p-4 rounded-lg border border-purple-200 shadow-sm">
-                <h3 className="font-medium text-purple-800 mb-3 flex items-center">
+              <div className="bg-violet-50 p-4 rounded-xl border border-violet-200 shadow-sm transition-all duration-300 hover:shadow-md">
+                <h3 className="font-medium text-violet-800 mb-3 flex items-center">
                   <Database className="mr-2 h-5 w-5" />
                   Select Resource
                 </h3>
@@ -166,19 +253,21 @@ const APIPoliciesDemo = () => {
                     <div 
                       key={resource.id}
                       onClick={() => setSelectedResource(resource.id)}
-                      className={`cursor-pointer p-3 rounded flex items-center ${
-                        selectedResource === resource.id ? 'bg-purple-200 border-l-4 border-purple-600 shadow-sm' : 'bg-white hover:bg-purple-50'
+                      className={`cursor-pointer p-3 rounded-lg flex items-center transition-all duration-300 transform ${
+                        selectedResource === resource.id 
+                          ? 'bg-violet-200 border-l-4 border-violet-600 shadow-md translate-x-1' 
+                          : 'bg-white hover:bg-violet-100 hover:translate-x-1'
                       }`}
                     >
-                      <div className="mr-2 text-purple-700">{resource.icon}</div>
+                      <div className="mr-2 text-violet-700">{resource.icon}</div>
                       <div className="font-medium">{resource.name}</div>
                     </div>
                   ))}
                 </div>
               </div>
               
-              <div className="bg-green-50 p-4 rounded-lg border border-green-200 shadow-sm">
-                <h3 className="font-medium text-green-800 mb-3 flex items-center">
+              <div className="bg-emerald-50 p-4 rounded-xl border border-emerald-200 shadow-sm transition-all duration-300 hover:shadow-md">
+                <h3 className="font-medium text-emerald-800 mb-3 flex items-center">
                   <Key className="mr-2 h-5 w-5" />
                   Select Actions (Multiple)
                 </h3>
@@ -187,12 +276,14 @@ const APIPoliciesDemo = () => {
                     <div 
                       key={action}
                       onClick={() => toggleAction(action)}
-                      className={`cursor-pointer p-3 rounded flex items-center ${
-                        selectedActions.includes(action) ? 'bg-green-200 border-l-4 border-green-600 shadow-sm' : 'bg-white hover:bg-green-50'
+                      className={`cursor-pointer p-3 rounded-lg flex items-center transition-all duration-300 transform ${
+                        selectedActions.includes(action) 
+                          ? 'bg-emerald-200 border-l-4 border-emerald-600 shadow-md translate-x-1' 
+                          : 'bg-white hover:bg-emerald-100 hover:translate-x-1'
                       }`}
                     >
-                      <div className={`w-5 h-5 rounded border mr-2 flex items-center justify-center ${
-                        selectedActions.includes(action) ? 'bg-green-600 border-green-600' : 'border-gray-400'
+                      <div className={`w-5 h-5 rounded border mr-2 flex items-center justify-center transition-all duration-300 ${
+                        selectedActions.includes(action) ? 'bg-emerald-600 border-emerald-600' : 'border-slate-400'
                       }`}>
                         {selectedActions.includes(action) && <Check className="h-4 w-4 text-white" />}
                       </div>
@@ -203,12 +294,12 @@ const APIPoliciesDemo = () => {
               </div>
             </div>
             
-            <div className="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200 shadow-sm">
-              <h3 className="font-medium text-gray-700 mb-2 flex items-center">
-                <Globe className="mr-2 h-5 w-5 text-blue-600" />
+            <div className="mt-4 p-4 bg-slate-50 rounded-xl border border-slate-200 shadow-sm transition-all duration-300 hover:shadow-md">
+              <h3 className="font-medium text-slate-700 mb-2 flex items-center">
+                <Globe className="mr-2 h-5 w-5 text-indigo-600" />
                 API Request Preview:
               </h3>
-              <pre className="bg-gray-900 text-green-400 p-4 rounded-lg overflow-x-auto text-sm shadow-inner">
+              <pre className="bg-slate-900 text-emerald-400 p-4 rounded-lg overflow-x-auto text-sm shadow-inner">
 {`GET /api/${selectedResource}
 Authorization: Bearer jwt.token.here
 X-User-ID: ${selectedUser.id}
@@ -219,44 +310,44 @@ X-Actions: ${selectedActions.join(',')}`}
         )}
         
         {activeStep === 1 && (
-          <div className="space-y-6">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
-              <Lock className="mr-2 h-6 w-6 text-blue-600" />
+          <div className="space-y-6 animate-fadeIn">
+            <h2 className="text-xl font-semibold text-slate-800 mb-4 flex items-center">
+              <Lock className="mr-2 h-6 w-6 text-indigo-600" />
               Policy Summary
             </h2>
             
             <div className="flex items-center justify-center my-8">
               <div className="relative">
-                <div className="w-72 h-72 rounded-full bg-blue-100 flex items-center justify-center shadow-lg">
-                  <div className="w-56 h-56 rounded-full bg-blue-200 flex items-center justify-center">
-                    <div className="w-40 h-40 rounded-full bg-blue-300 flex items-center justify-center">
-                      <Lock className="h-20 w-20 text-blue-800" />
+                <div className="w-72 h-72 rounded-full bg-indigo-100 flex items-center justify-center shadow-lg transition-all duration-500 transform hover:scale-105">
+                  <div className="w-56 h-56 rounded-full bg-indigo-200 flex items-center justify-center transition-all duration-500">
+                    <div className="w-40 h-40 rounded-full bg-indigo-300 flex items-center justify-center transition-all duration-500">
+                      <Lock className="h-20 w-20 text-indigo-800 animate-pulse" />
                     </div>
                   </div>
                 </div>
                 
-                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-3 rounded-lg shadow-lg border border-blue-200">
+                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-3 rounded-lg shadow-lg border border-indigo-200 transition-all duration-300 hover:shadow-xl">
                   <div className="flex items-center text-sm">
-                    <User className="mr-2 h-5 w-5 text-blue-600" />
+                    <User className="mr-2 h-5 w-5 text-indigo-600" />
                     <span className="font-medium">User: <strong>{selectedUser.name}</strong></span>
                   </div>
                 </div>
                 
-                <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 bg-white p-3 rounded-lg shadow-lg border border-blue-200">
+                <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 bg-white p-3 rounded-lg shadow-lg border border-indigo-200 transition-all duration-300 hover:shadow-xl">
                   <div className="flex items-center text-sm">
-                    <Key className="mr-2 h-5 w-5 text-green-600" />
+                    <Key className="mr-2 h-5 w-5 text-emerald-600" />
                     <span className="font-medium">Actions: <strong>{selectedActions.join(', ')}</strong></span>
                   </div>
                 </div>
                 
-                <div className="absolute left-0 top-1/2 transform -translate-x-3/4 -translate-y-1/2 bg-white p-3 rounded-lg shadow-lg border border-blue-200">
+                <div className="absolute left-0 top-1/2 transform -translate-x-3/4 -translate-y-1/2 bg-white p-3 rounded-lg shadow-lg border border-indigo-200 transition-all duration-300 hover:shadow-xl">
                   <div className="flex items-center text-sm">
-                    <Database className="mr-2 h-5 w-5 text-purple-600" />
+                    <Database className="mr-2 h-5 w-5 text-violet-600" />
                     <span className="font-medium">Resource: <strong>{selectedResource}</strong></span>
                   </div>
                 </div>
                 
-                <div className="absolute right-0 top-1/2 transform translate-x-3/4 -translate-y-1/2 bg-white p-3 rounded-lg shadow-lg border border-blue-200">
+                <div className="absolute right-0 top-1/2 transform translate-x-3/4 -translate-y-1/2 bg-white p-3 rounded-lg shadow-lg border border-indigo-200 transition-all duration-300 hover:shadow-xl">
                   <div className="flex items-center text-sm">
                     <Shield className="mr-2 h-5 w-5 text-red-600" />
                     <span className="font-medium">Role: <strong>{selectedUser.role}</strong></span>
@@ -265,14 +356,14 @@ X-Actions: ${selectedActions.join(',')}`}
               </div>
             </div>
             
-            <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200 shadow-md">
-              <h3 className="font-medium text-gray-700 mb-3 flex items-center">
-                <Shield className="mr-2 h-5 w-5 text-blue-700" />
+            <div className="mt-6 p-4 bg-slate-50 rounded-lg border border-slate-200 shadow-md transition-all duration-300 hover:shadow-lg">
+              <h3 className="font-medium text-slate-700 mb-3 flex items-center">
+                <Shield className="mr-2 h-5 w-5 text-indigo-700" />
                 Policy Rules Applied:
               </h3>
               <div className="space-y-3 max-w-3xl mx-auto">
-                <div className="p-3 bg-white rounded-lg border border-gray-100 flex items-center shadow-sm">
-                  <div className="mr-3 text-purple-600 bg-purple-100 p-2 rounded-full">
+                <div className="p-3 bg-white rounded-lg border border-slate-100 flex items-center shadow-sm transition-all duration-300 hover:shadow-md hover:border-indigo-200">
+                  <div className="mr-3 text-violet-600 bg-violet-100 p-2 rounded-full">
                     <Users className="h-5 w-5" />
                   </div>
                   <div className="text-sm">
@@ -280,8 +371,8 @@ X-Actions: ${selectedActions.join(',')}`}
                   </div>
                 </div>
                 
-                <div className="p-3 bg-white rounded-lg border border-gray-100 flex items-center shadow-sm">
-                  <div className="mr-3 text-green-600 bg-green-100 p-2 rounded-full">
+                <div className="p-3 bg-white rounded-lg border border-slate-100 flex items-center shadow-sm transition-all duration-300 hover:shadow-md hover:border-emerald-200">
+                  <div className="mr-3 text-emerald-600 bg-emerald-100 p-2 rounded-full">
                     <Key className="h-5 w-5" />
                   </div>
                   <div className="text-sm">
@@ -289,8 +380,8 @@ X-Actions: ${selectedActions.join(',')}`}
                   </div>
                 </div>
                 
-                <div className="p-3 bg-white rounded-lg border border-gray-100 flex items-center shadow-sm">
-                  <div className="mr-3 text-purple-600 bg-purple-100 p-2 rounded-full">
+                <div className="p-3 bg-white rounded-lg border border-slate-100 flex items-center shadow-sm transition-all duration-300 hover:shadow-md hover:border-violet-200">
+                  <div className="mr-3 text-violet-600 bg-violet-100 p-2 rounded-full">
                     <Database className="h-5 w-5" />
                   </div>
                   <div className="text-sm">
@@ -299,7 +390,7 @@ X-Actions: ${selectedActions.join(',')}`}
                 </div>
                 
                 {selectedResource === 'financial-records' && (
-                  <div className="p-3 bg-white rounded-lg border border-red-100 flex items-center shadow-sm">
+                  <div className="p-3 bg-white rounded-lg border border-red-100 flex items-center shadow-sm transition-all duration-300 hover:shadow-md hover:border-red-300">
                     <div className="mr-3 text-red-600 bg-red-100 p-2 rounded-full">
                       <AlertCircle className="h-5 w-5" />
                     </div>
@@ -310,7 +401,7 @@ X-Actions: ${selectedActions.join(',')}`}
                 )}
                 
                 {selectedResource === 'system-settings' && (
-                  <div className="p-3 bg-white rounded-lg border border-red-100 flex items-center shadow-sm">
+                  <div className="p-3 bg-white rounded-lg border border-red-100 flex items-center shadow-sm transition-all duration-300 hover:shadow-md hover:border-red-300">
                     <div className="mr-3 text-red-600 bg-red-100 p-2 rounded-full">
                       <AlertCircle className="h-5 w-5" />
                     </div>
@@ -325,30 +416,41 @@ X-Actions: ${selectedActions.join(',')}`}
         )}
         
         {activeStep === 2 && (
-          <div className="space-y-6">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
-              <Shield className="mr-2 h-6 w-6 text-blue-600" />
+          <div className="space-y-6 animate-fadeIn">
+            <h2 className="text-xl font-semibold text-slate-800 mb-4 flex items-center">
+              <Shield className="mr-2 h-6 w-6 text-indigo-600" />
               Authorization Decision
             </h2>
             
             <div className="flex items-center justify-center py-10">
               {showDecision && (
-                <div className={`flex flex-col items-center p-8 rounded-lg ${
-                  authorization?.overall ? 'bg-green-50' : 'bg-red-50'
-                } border-2 ${
-                  authorization?.overall ? 'border-green-300' : 'border-red-300'
-                } shadow-lg max-w-2xl w-full`}>
-                  <div className={`rounded-full p-5 ${
-                    authorization?.overall ? 'bg-green-200 text-green-700' : 'bg-red-200 text-red-700'
-                  } shadow-md`}>
-                    {authorization?.overall ? <Check className="h-16 w-16" /> : <X className="h-16 w-16" />}
+                <div 
+                  className={`flex flex-col items-center p-8 rounded-xl ${
+                    authorization?.overall ? 'bg-emerald-50' : 'bg-red-50'
+                  } border-2 ${
+                    authorization?.overall ? 'border-emerald-300' : 'border-red-300'
+                  } shadow-lg max-w-2xl w-full transition-all duration-500 transform ${
+                    animateTransition ? 'scale-95 opacity-0' : 'scale-100 opacity-100'
+                  }`}
+                >
+                  <div 
+                    className={`rounded-full p-5 ${
+                      authorization?.overall ? 'bg-emerald-200 text-emerald-700' : 'bg-red-200 text-red-700'
+                    } shadow-md transition-all duration-500 transform hover:scale-110`}
+                  >
+                    {authorization?.overall ? 
+                      <Check className="h-16 w-16 animate-[ping_1s_ease-in-out]" /> : 
+                      <X className="h-16 w-16 animate-[ping_1s_ease-in-out]" />
+                    }
                   </div>
-                  <h3 className={`text-xl font-bold mt-4 ${
-                    authorization?.overall ? 'text-green-800' : 'text-red-800'
-                  }`}>
+                  <h3 
+                    className={`text-xl font-bold mt-4 ${
+                      authorization?.overall ? 'text-emerald-800' : 'text-red-800'
+                    }`}
+                  >
                     {authorization?.overall ? 'Access Granted' : 'Access Denied'}
                   </h3>
-                  <p className="text-gray-600 mt-2 text-center max-w-md">
+                  <p className="text-slate-600 mt-2 text-center max-w-md">
                     {authorization?.overall ? 
                       `${selectedUser.name} is authorized to perform all requested actions on ${selectedResource}` :
                       `${selectedUser.name} is not authorized to perform all requested actions on ${selectedResource}`
@@ -356,26 +458,29 @@ X-Actions: ${selectedActions.join(',')}`}
                   </p>
                   
                   <div className="mt-6 w-full">
-                    <h4 className="text-gray-700 font-medium mb-3 flex items-center">
+                    <h4 className="text-slate-700 font-medium mb-3 flex items-center">
                       <Database className="mr-2 h-5 w-5 text-indigo-600" />
                       Action Details:
                     </h4>
                     <div className="grid gap-3">
                       {authorization?.details.map((detail, index) => (
-                        <div key={index} className={`p-4 rounded-lg border ${
-                          detail.allowed ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'
-                        } shadow-sm`}>
+                        <div 
+                          key={index} 
+                          className={`p-4 rounded-lg border transition-all duration-300 transform hover:translate-x-1 ${
+                            detail.allowed ? 'bg-emerald-50 border-emerald-200' : 'bg-red-50 border-red-200'
+                          } shadow-sm`}
+                        >
                           <div className="flex items-center justify-between">
                             <div className="flex items-center">
                               <div className={`mr-2 ${
-                                detail.allowed ? 'text-green-600' : 'text-red-600'
+                                detail.allowed ? 'text-emerald-600' : 'text-red-600'
                               }`}>
                                 {detail.allowed ? <Check className="h-5 w-5" /> : <X className="h-5 w-5" />}
                               </div>
                               <span className="font-medium">{detail.action}</span>
                             </div>
                             <span className={`text-sm font-medium ${
-                              detail.allowed ? 'text-green-600' : 'text-red-600'
+                              detail.allowed ? 'text-emerald-600' : 'text-red-600'
                             }`}>
                               {detail.allowed ? 'Allowed' : 'Denied'}
                             </span>
@@ -385,7 +490,7 @@ X-Actions: ${selectedActions.join(',')}`}
                     </div>
                   </div>
                   
-                  <div className="mt-4 p-3 bg-white rounded-lg text-sm border border-gray-200 w-full">
+                  <div className="mt-4 p-3 bg-white rounded-lg text-sm border border-slate-200 w-full transition-all duration-300 hover:shadow-md">
                     <pre className="whitespace-pre-wrap">
 {`{
   "subject": "${selectedUser.name}",
@@ -406,28 +511,33 @@ X-Actions: ${selectedActions.join(',')}`}
         )}
         
         {activeStep === 3 && (
-          <div className="space-y-6">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
-              <Server className="mr-2 h-6 w-6 text-blue-600" />
+          <div className="space-y-6 animate-fadeIn">
+            <h2 className="text-xl font-semibold text-slate-800 mb-4 flex items-center">
+              <Server className="mr-2 h-6 w-6 text-indigo-600" />
               API Response
             </h2>
             
             <div className="flex justify-center">
               <div className="max-w-2xl w-full space-y-4">
                 <div className="flex items-center space-x-4 mb-6">
-                  <div className="flex-shrink-0 bg-blue-100 p-3 rounded-full shadow-md">
-                    <Globe className="h-10 w-10 text-blue-600" />
+                  <div className="flex-shrink-0 bg-indigo-100 p-3 rounded-full shadow-md transition-all duration-300 transform hover:scale-110">
+                    <Globe className="h-10 w-10 text-indigo-600" />
                   </div>
                   <div className="flex-grow relative">
-                    <div className="h-3 bg-blue-200 rounded-full shadow-inner overflow-hidden">
-                      <div className={`h-full rounded-full ${
-                        authorization?.overall ? 'bg-blue-600 w-full' : 'bg-red-500 w-1/4'
-                      }`}></div>
-                      <div className="absolute top-0 left-0 right-0 bottom-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-30" style={{ animation: "shine 2s infinite linear" }}></div>
+                    <div className="h-3 bg-indigo-200 rounded-full shadow-inner overflow-hidden">
+                      <div 
+                        className={`h-full rounded-full transition-all duration-1000 ease-in-out ${
+                          authorization?.overall ? 'bg-indigo-600 w-full' : 'bg-red-500 w-1/4'
+                        }`}
+                      ></div>
+                      <div 
+                        className="absolute top-0 left-0 right-0 bottom-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-30" 
+                        style={{ animation: "shine 2s infinite linear" }}
+                      ></div>
                     </div>
                   </div>
-                  <div className="flex-shrink-0 bg-purple-100 p-3 rounded-full shadow-md">
-                    <Server className="h-10 w-10 text-purple-600" />
+                  <div className="flex-shrink-0 bg-violet-100 p-3 rounded-full shadow-md transition-all duration-300 transform hover:scale-110">
+                    <Server className="h-10 w-10 text-violet-600" />
                   </div>
                 </div>
                 
@@ -437,17 +547,30 @@ X-Actions: ${selectedActions.join(',')}`}
                       0% { transform: translateX(-100%); }
                       100% { transform: translateX(100%); }
                     }
+                    @keyframes fadeIn {
+                      from { opacity: 0; transform: translateY(10px); }
+                      to { opacity: 1; transform: translateY(0); }
+                    }
+                    .animate-fadeIn {
+                      animation: fadeIn 0.5s ease-out forwards;
+                    }
+                    @keyframes ping {
+                      75%, 100% {
+                        transform: scale(1.2);
+                        opacity: 0;
+                      }
+                    }
                   `}
                 </style>
                 
-                <div className="bg-gray-900 p-5 rounded-lg shadow-lg text-sm">
+                <div className="bg-slate-900 p-5 rounded-xl shadow-lg text-sm transition-all duration-300 transform hover:shadow-xl">
                   {authorization?.overall ? (
                     <>
                       <div className="flex items-center mb-3">
-                        <div className="h-4 w-4 rounded-full bg-green-500 mr-3"></div>
-                        <span className="text-green-400 font-medium">200 OK</span>
+                        <div className="h-4 w-4 rounded-full bg-emerald-500 mr-3 animate-pulse"></div>
+                        <span className="text-emerald-400 font-medium">200 OK</span>
                       </div>
-                      <pre className="text-green-300 mt-3 overflow-x-auto">
+                      <pre className="text-emerald-300 mt-3 overflow-x-auto">
 {`{
   "status": "success",
   "data": {
@@ -466,7 +589,7 @@ X-Actions: ${selectedActions.join(',')}`}
                   ) : (
                     <>
                       <div className="flex items-center mb-3">
-                        <div className="h-4 w-4 rounded-full bg-red-500 mr-3"></div>
+                        <div className="h-4 w-4 rounded-full bg-red-500 mr-3 animate-pulse"></div>
                         <span className="text-red-400 font-medium">403 Forbidden</span>
                       </div>
                       <pre className="text-red-300 mt-3 overflow-x-auto">
@@ -481,29 +604,33 @@ X-Actions: ${selectedActions.join(',')}`}
                   )}
                 </div>
                 
-                <div className="p-5 bg-blue-50 rounded-lg border border-blue-200 shadow-md">
-                  <h3 className="font-medium text-gray-700 mb-3 flex items-center">
-                    <Server className="mr-2 h-5 w-5 text-blue-600" />
+                <div className="p-5 bg-indigo-50 rounded-xl border border-indigo-200 shadow-md transition-all duration-300 hover:shadow-lg">
+                  <h3 className="font-medium text-slate-700 mb-3 flex items-center">
+                    <Server className="mr-2 h-5 w-5 text-indigo-600" />
                     Request Summary:
                   </h3>
                   <div className="space-y-3">
                     <div className="grid grid-cols-2 gap-3 bg-white p-4 rounded-lg shadow-sm">
-                      <div className="text-sm text-gray-600 font-medium">User:</div>
-                      <div className="text-sm font-medium bg-blue-50 p-2 rounded">{selectedUser.name}</div>
+                      <div className="text-sm text-slate-600 font-medium">User:</div>
+                      <div className="text-sm font-medium bg-indigo-50 p-2 rounded transition-all duration-300 hover:bg-indigo-100">{selectedUser.name}</div>
                       
-                      <div className="text-sm text-gray-600 font-medium">Resource:</div>
-                      <div className="text-sm font-medium bg-purple-50 p-2 rounded">{selectedResource}</div>
+                      <div className="text-sm text-slate-600 font-medium">Resource:</div>
+                      <div className="text-sm font-medium bg-violet-50 p-2 rounded transition-all duration-300 hover:bg-violet-100">{selectedResource}</div>
                       
-                      <div className="text-sm text-gray-600 font-medium">Actions:</div>
-                      <div className="text-sm font-medium bg-green-50 p-2 rounded">{selectedActions.join(', ')}</div>
+                      <div className="text-sm text-slate-600 font-medium">Actions:</div>
+                      <div className="text-sm font-medium bg-emerald-50 p-2 rounded transition-all duration-300 hover:bg-emerald-100">{selectedActions.join(', ')}</div>
                       
-                      <div className="text-sm text-gray-600 font-medium">Decision:</div>
-                      <div className={`text-sm font-medium p-2 rounded ${authorization?.overall ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                      <div className="text-sm text-slate-600 font-medium">Decision:</div>
+                      <div className={`text-sm font-medium p-2 rounded transition-all duration-300 hover:scale-105 ${
+                        authorization?.overall ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' : 'bg-red-100 text-red-700 hover:bg-red-200'
+                      }`}>
                         {authorization?.overall ? 'Authorized ✓' : 'Unauthorized ✗'}
                       </div>
                       
-                      <div className="text-sm text-gray-600 font-medium">Response Code:</div>
-                      <div className={`text-sm font-medium p-2 rounded ${authorization?.overall ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                      <div className="text-sm text-slate-600 font-medium">Response Code:</div>
+                      <div className={`text-sm font-medium p-2 rounded transition-all duration-300 hover:scale-105 ${
+                        authorization?.overall ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200' : 'bg-red-100 text-red-700 hover:bg-red-200'
+                      }`}>
                         {authorization?.overall ? '200 OK' : '403 Forbidden'}
                       </div>
                     </div>
@@ -519,8 +646,10 @@ X-Actions: ${selectedActions.join(',')}`}
         <button
           onClick={handleBack}
           disabled={activeStep === 0}
-          className={`px-5 py-2 rounded-lg shadow flex items-center ${
-            activeStep === 0 ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-blue-100 text-blue-800 hover:bg-blue-200'
+          className={`px-5 py-2 rounded-lg shadow flex items-center transition-all duration-300 ${
+            activeStep === 0 
+              ? 'bg-slate-200 text-slate-400 cursor-not-allowed' 
+              : 'bg-indigo-100 text-indigo-800 hover:bg-indigo-200 hover:shadow-md'
           }`}
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
@@ -530,7 +659,7 @@ X-Actions: ${selectedActions.join(',')}`}
         </button>
         <button
           onClick={handleNext}
-          className="px-5 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 flex items-center"
+          className="px-5 py-2 bg-indigo-600 text-white rounded-lg shadow hover:bg-indigo-700 hover:shadow-lg flex items-center transition-all duration-300 transform hover:translate-y-[-2px]"
         >
           {activeStep === steps.length - 1 ? 'Restart Flow' : 'Next Step'}
           {activeStep !== steps.length - 1 && (
