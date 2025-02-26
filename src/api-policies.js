@@ -132,10 +132,26 @@ const APIPoliciesDemo = () => {
     
     if (activeStep < steps.length - 1) {
       setActiveStep(activeStep + 1);
+      
+      // Scroll to top with smooth animation
+      setTimeout(() => {
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
+      }, 100);
     } else {
       setActiveStep(0);
       setShowDecision(false);
       setAuthorization(null);
+      
+      // Scroll to top with smooth animation
+      setTimeout(() => {
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
+      }, 100);
     }
   };
   
@@ -149,6 +165,14 @@ const APIPoliciesDemo = () => {
       } else if (activeStep === 2) {
         setShowDecision(false);
       }
+      
+      // Scroll to top with smooth animation
+      setTimeout(() => {
+        window.scrollTo({
+          top: 0,
+          behavior: 'smooth'
+        });
+      }, 100);
     }
   };
 
