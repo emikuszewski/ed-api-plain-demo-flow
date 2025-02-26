@@ -51,7 +51,7 @@ const APIPoliciesDemo = () => {
   const users = [
     { id: 1, name: 'Michael Chen', role: 'Administrator', permissions: ['READ', 'WRITE', 'DELETE', 'CREATE', 'UPDATE'] },
     { id: 2, name: 'Raj Patel', role: 'User', permissions: ['READ'] },
-    { id: 3, name: 'Sara Jameson (Wealth Manager)', role: 'Finance', permissions: ['READ', 'WRITE', 'CREATE', 'UPDATE'] }
+    { id: 3, name: 'Sara Jameson', role: 'Wealth Manager', permissions: ['READ', 'WRITE', 'CREATE', 'UPDATE'] }
   ];
   
   const [selectedUser, setSelectedUser] = useState(users[0]);
@@ -92,7 +92,7 @@ const APIPoliciesDemo = () => {
       
       let allowed = hasPermission;
       
-      if (selectedResource === 'financial-records' && selectedUser.role !== 'Finance' && selectedUser.role !== 'Administrator') {
+      if (selectedResource === 'financial-records' && selectedUser.role !== 'Wealth Manager' && selectedUser.role !== 'Administrator') {
         allowed = false;
       }
       
@@ -395,7 +395,7 @@ X-Actions: ${selectedActions.join(',')}`}
                       <AlertCircle className="h-5 w-5" />
                     </div>
                     <div className="text-sm">
-                      <strong>Special Policy:</strong> Financial Records require Finance or Administrator role
+                      <strong>Special Policy:</strong> Financial Records require Wealth Manager or Administrator role
                     </div>
                   </div>
                 )}
