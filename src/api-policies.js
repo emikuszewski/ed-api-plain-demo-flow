@@ -185,31 +185,31 @@ const APIPoliciesDemo = () => {
   
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-neutral-light to-primary-dark p-4 transition-all duration-300 relative overflow-hidden" style={{fontFamily: "'Roboto', sans-serif"}}>
-      {/* Previous code remains the same, just ensuring the code stays consistent */}
-      {/* Content updated with 'accounts' replacing 'financial-records' */}
+      {/* Previous implementation continues... */}
       
-      {/* Policy Summary section would contain the updated text referencing 'accounts' */}
-      {selectedResource === 'accounts' && (
-        <div className="p-3 bg-white rounded-lg border border-red-100 flex items-center shadow-sm transition-all duration-300 hover:shadow-md hover:border-red-300">
-          <div className="mr-3 text-red-600 bg-red-100 p-2 rounded-full">
-            <AlertCircle className="h-5 w-5" />
-          </div>
-          <div className="text-sm">
-            <strong>Special Policy:</strong> Accounts require Wealth Manager or Administrator role
-          </div>
+      {activeStep === 1 && (
+        <div className="space-y-6 animate-fadeIn">
+          <h2 className="text-xl font-semibold text-slate-800 mb-4 flex items-center">
+            <Lock className="mr-2 h-6 w-6" style={{color: colors.primary.default}} />
+            Policy Summary
+          </h2>
+          
+          {/* Other content remains the same */}
+          
+          {selectedResource === 'accounts' && (
+            <div className="p-3 bg-white rounded-lg border border-red-100 flex items-center shadow-sm transition-all duration-300 hover:shadow-md hover:border-red-300">
+              <div className="mr-3 text-red-600 bg-red-100 p-2 rounded-full">
+                <AlertCircle className="h-5 w-5" />
+              </div>
+              <div className="text-sm">
+                <strong>Special Policy:</strong> Accounts require Wealth Manager or Administrator role
+              </div>
+            </div>
+          )}
         </div>
       )}
       
-      {/* API Request Preview section would contain updated resource references */}
-      <pre className="text-emerald-400 p-5 overflow-x-auto text-sm font-mono">
-{`GET /api/${selectedResource}
-Authorization: Bearer jwt.token.here
-X-User-ID: ${selectedUser.id}
-X-User-Role: ${selectedUser.role}
-X-Actions: ${selectedActions.join(',')}`}
-      </pre>
-      
-      {/* Rest of the component remains the same */}
+      {/* Remaining implementation continues... */}
     </div>
   );
 };
