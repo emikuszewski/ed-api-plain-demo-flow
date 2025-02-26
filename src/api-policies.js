@@ -23,8 +23,8 @@ const APIPoliciesDemo = () => {
     },
     success: {
       light: '#D1E4E5', // Misty Teal
-      medium: '#BAF967', // Neon Green (digital only)
-      default: '#BAF967', // Neon Green (digital only)
+      medium: '#00A7B5', // PlainID Teal (replacing Neon Green for better visibility)
+      default: '#00A7B5', // PlainID Teal (replacing Neon Green for better visibility)
       dark: '#00A7B5', // PlainID Teal
     },
     danger: {
@@ -163,15 +163,6 @@ const APIPoliciesDemo = () => {
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-neutral-light to-primary-dark p-4 transition-all duration-300 relative overflow-hidden" style={{fontFamily: "'Roboto', sans-serif"}}>
       {/* PlainID dot grid pattern background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none" style={dotPatternStyle}></div>
-      
-      {/* Background decoration */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 left-0 w-full h-full opacity-20">
-          <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full" style={{backgroundColor: colors.primary.medium, animation: "float 6s ease-in-out infinite", animationDelay: "0.5s"}}></div>
-          <div className="absolute bottom-1/4 right-1/3 w-80 h-80 rounded-full" style={{backgroundColor: colors.success.medium, animation: "float 6s ease-in-out infinite", animationDelay: "1.2s"}}></div>
-          <div className="absolute top-1/3 right-1/4 w-40 h-40 rounded-full" style={{backgroundColor: colors.primary.light, animation: "float 6s ease-in-out infinite", animationDelay: "0.8s"}}></div>
-        </div>
-      </div>
       
       <div className="text-center mb-8 relative z-10">
         {/* PlainID Logo */}
