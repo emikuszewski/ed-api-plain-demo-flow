@@ -7,25 +7,25 @@ const APIPoliciesDemo = () => {
   const [authorization, setAuthorization] = useState(null);
   const [animateTransition, setAnimateTransition] = useState(false);
   
-  // Modern color palette
+  // PlainID brand colors (from brand guidelines)
   const colors = {
     primary: {
-      light: '#EEF2FF', // indigo-50
-      medium: '#818CF8', // indigo-400
-      default: '#4F46E5', // indigo-600
-      dark: '#3730A3', // indigo-800
+      light: '#D1E4E5', // Misty Teal
+      medium: '#00A7B5', // PlainID Teal
+      default: '#00A7B5', // PlainID Teal
+      dark: '#002A3A', // Deep Teal
     },
     secondary: {
-      light: '#F5F3FF', // violet-50
-      medium: '#A78BFA', // violet-400
-      default: '#7C3AED', // violet-600
-      dark: '#5B21B6', // violet-800
+      light: '#EEF1F4', // Icy Gray
+      medium: '#BFCED6', // Cloudy Gray
+      default: '#515A6C', // Slate
+      dark: '#002A3A', // Deep Teal
     },
     success: {
-      light: '#ECFDF5', // emerald-50
-      medium: '#34D399', // emerald-400
-      default: '#10B981', // emerald-500
-      dark: '#065F46', // emerald-800
+      light: '#D1E4E5', // Misty Teal
+      medium: '#BAF967', // Neon Green (digital only)
+      default: '#BAF967', // Neon Green (digital only)
+      dark: '#00A7B5', // PlainID Teal
     },
     danger: {
       light: '#FEF2F2', // red-50
@@ -34,10 +34,10 @@ const APIPoliciesDemo = () => {
       dark: '#991B1B', // red-800
     },
     neutral: {
-      light: '#F8FAFC', // slate-50
-      medium: '#94A3B8', // slate-400
-      default: '#64748B', // slate-500
-      dark: '#1E293B', // slate-800
+      light: '#EEF1F4', // Icy Gray
+      medium: '#BFCED6', // Cloudy Gray
+      default: '#515A6C', // Slate
+      dark: '#002A3A', // Deep Teal
     }
   };
   
@@ -148,36 +148,63 @@ const APIPoliciesDemo = () => {
   const getStepBgColor = (index) => {
     if (index === activeStep) return colors.primary.default;
     if (index < activeStep) return colors.success.default;
-    return colors.neutral.medium;
+    return colors.secondary.medium;
   };
   
+  // PlainID background dot pattern styles
+  const dotPatternStyle = {
+    backgroundImage: `radial-gradient(${colors.primary.medium} 1.5px, transparent 1.5px), radial-gradient(${colors.primary.medium} 1.5px, transparent 1.5px)`,
+    backgroundSize: '20px 20px',
+    backgroundPosition: '0 0, 10px 10px',
+    opacity: 0.15
+  };
+
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-br from-slate-50 to-indigo-50 p-4 transition-all duration-300 relative overflow-hidden">
+    <div className="flex flex-col min-h-screen bg-gradient-to-br from-neutral-light to-primary-dark p-4 transition-all duration-300 relative overflow-hidden" style={{fontFamily: "'Roboto', sans-serif"}}>
+      {/* PlainID dot grid pattern background */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none" style={dotPatternStyle}></div>
+      
       {/* Background decoration */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 left-0 w-full h-full opacity-10">
-          <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-indigo-400 animate-float" style={{animationDelay: "0.5s"}}></div>
-          <div className="absolute bottom-1/4 right-1/3 w-80 h-80 rounded-full bg-violet-400 animate-float" style={{animationDelay: "1.2s"}}></div>
-          <div className="absolute top-1/3 right-1/4 w-40 h-40 rounded-full bg-emerald-400 animate-float" style={{animationDelay: "0.8s"}}></div>
+        <div className="absolute top-0 left-0 w-full h-full opacity-20">
+          <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full" style={{backgroundColor: colors.primary.medium, animation: "float 6s ease-in-out infinite", animationDelay: "0.5s"}}></div>
+          <div className="absolute bottom-1/4 right-1/3 w-80 h-80 rounded-full" style={{backgroundColor: colors.success.medium, animation: "float 6s ease-in-out infinite", animationDelay: "1.2s"}}></div>
+          <div className="absolute top-1/3 right-1/4 w-40 h-40 rounded-full" style={{backgroundColor: colors.primary.light, animation: "float 6s ease-in-out infinite", animationDelay: "0.8s"}}></div>
         </div>
       </div>
       
       <div className="text-center mb-8 relative z-10">
+        {/* PlainID Logo */}
+        <div className="flex justify-center mb-4">
+          <div className="bg-white/80 px-6 py-3 rounded-xl shadow-md">
+            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNzAgNzAiIGZpbGw9Im5vbmUiPgogICAgPGcgZmlsbD0iIzAwQTdCNSI+CiAgICAgICAgPGNpcmNsZSBjeD0iMjAiIGN5PSIyMCIgcj0iMTAiLz4KICAgICAgICA8cGF0aCBkPSJNMTUgMjVjMCAxMCAxMCAxNSAyNSAxNWgxOHYtN2gtMThjLTEwIDAtMTUtMy0xNS04VjI1eiIvPgogICAgICAgIDxwYXRoIGQ9Ik0yMCA1MHYtMTBjMC0xNSA3LTIwIDE1LTIwaDUwYzQgMCAxMSAxIDExIDh2MjJoLTEwVjMwYzAtMi0yLTMtNC0zaC0zNWMtMTAgMC0xNSA1LTE1IDEwdjEzaC0xMnoiLz4KICAgICAgICA8cGF0aCBkPSJNMjIwIDQ2LjVWMjcuNXYtNWgtOHY1djE5YzAgNCA0IDUuNSA4IDUuNWgyNXYtNi41aC0yMGMtMyAwLTUtMS01LTV6Iiž+CiAgICA8L2c+CiAgICA8cGF0aCBkPSJNMTIwIDI3LjV2MjNoOFYyOS41YzAtMS41IDEtMyAzLTNoMTJjMiAwIDMgMS41IDMgM3YyMWg4di0yM2MwLTUtNS03LjUtMTAtNy41aC0xNGMtNiAwLTEwIDIuNS0xMCA3LjV6IiBmaWxsPSIjMDAyQTNBIiAvPgogICAgPHBhdGggZD0iTTE2MCAyMnY2aDEwdjIyLjVoOFYyOGgxMHYtNnoiIGZpbGw9IiMwMDJBM0EiIC8+CiAgICA8cGF0aCBkPSJNMTk1IDQ0aC0xM3Y2LjVoMjNjNC41IDAgNi41LTIgNi41LTUuNXYtMjNoLTh2MjBjMCAyLTIgMi00IDJ6IiBmaWxsPSIjMDAyQTNBIiAvPgogICAgPHBhdGggZD0iTTI0MCAyMmwtMTEuNSAyOC41aDkuNWwxLjUtNCAxMiAuNSAxLjUgMy41aDkuNUwyNTEgMjJoLTExem0xLjUgMTkuNWwzLjUtMTAgMy41IDEwaC03eiIgZmlsbD0iIzAwQTdCNSIgLz4KPC9zdmc+" 
+              alt="PlainID Logo" 
+              className="h-10" />
+          </div>
+        </div>
+        
         <div className="inline-flex items-center justify-center bg-white/60 backdrop-blur-sm py-3 px-6 rounded-xl shadow-lg mb-2 animate-pulse-slow">
-          <Shield className="mr-3 h-8 w-8 text-indigo-600" />
-          <h1 className="text-3xl font-bold text-indigo-800 bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-violet-600">
+          <Shield className="mr-3 h-8 w-8" style={{color: colors.primary.default}} />
+          <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r" 
+            style={{
+              backgroundImage: `linear-gradient(to right, ${colors.primary.default}, ${colors.primary.dark})`,
+              fontFamily: "'Roboto', sans-serif", 
+              fontWeight: 500 // Roboto Medium per guidelines
+            }}>
             API Policies and Authorization
           </h1>
         </div>
-        <p className="text-slate-600 mt-2 max-w-xl mx-auto">A visual API authorization flow for a Wealth Management firm</p>
+        <p className="mt-2 max-w-xl mx-auto" style={{color: colors.secondary.default, fontFamily: "'Roboto', sans-serif"}}>
+          A visual API authorization flow for a Wealth Management firm
+        </p>
       </div>
       
       {/* Refined progress steps */}
       <div className="mb-12 w-full relative z-10">
-        <div className="glass-effect py-5 px-8 rounded-2xl mb-5 shadow-lg">
+        <div className="glass-effect py-5 px-8 rounded-2xl mb-5 shadow-lg" style={{backgroundColor: "rgba(255, 255, 255, 0.7)"}}>
           <div className="grid grid-cols-4 gap-2 relative">
             {/* Progress connector line */}
-            <div className="absolute top-6 left-0 w-full h-0.5 bg-slate-200"></div>
+            <div className="absolute top-6 left-0 w-full h-0.5" style={{backgroundColor: colors.secondary.medium}}></div>
             
             {steps.map((step, index) => (
               <div key={step.id} className="flex flex-col items-center relative">
@@ -200,8 +227,9 @@ const APIPoliciesDemo = () => {
                   }`}
                   style={{ 
                     backgroundColor: getStepBgColor(index),
-                    color: index <= activeStep ? 'white' : 'rgb(30, 41, 59)',
-                    boxShadow: index === activeStep ? '0 0 20px rgba(79, 70, 229, 0.7)' : ''
+                    color: index <= activeStep ? 'white' : colors.secondary.default,
+                    boxShadow: index === activeStep ? `0 0 20px ${colors.primary.default}80` : '',
+                    fontFamily: "'Roboto', sans-serif"
                   }}
                 >
                   {index < activeStep ? (
@@ -217,11 +245,16 @@ const APIPoliciesDemo = () => {
                   )}
                 </div>
                 
-                <div className="text-sm mt-3 text-center font-medium text-slate-700">
+                <div className="text-sm mt-3 text-center font-medium" style={{fontFamily: "'Roboto', sans-serif"}}>
                   <span className={`inline-block transition-all duration-300 ${
-                    index === activeStep ? 'transform translate-y-0 text-indigo-700 font-semibold' : 
-                    index < activeStep ? 'text-emerald-600' : 'opacity-70'
-                  }`}>
+                    index === activeStep ? 'transform translate-y-0 font-semibold' : 
+                    index < activeStep ? '' : 'opacity-70'
+                  }`}
+                  style={{ 
+                    color: index === activeStep ? colors.primary.default : 
+                           index < activeStep ? colors.success.default : 
+                           colors.secondary.default
+                  }}>
                     {step.title}
                   </span>
                 </div>
@@ -232,14 +265,33 @@ const APIPoliciesDemo = () => {
       </div>
       
       <div 
-        className={`glass-effect rounded-xl shadow-2xl p-8 mb-6 flex-grow border border-white/20 transition-all duration-500 ease-in-out relative z-10 ${
+        className={`glass-effect rounded-xl shadow-2xl p-8 mb-6 flex-grow border transition-all duration-500 ease-in-out relative z-10 ${
           animateTransition ? 'opacity-0 transform translate-y-4' : 'opacity-100 transform translate-y-0'
         }`}
-        style={{ backdropFilter: 'blur(12px)' }}
+        style={{ 
+          backdropFilter: 'blur(12px)',
+          backgroundColor: 'rgba(255, 255, 255, 0.7)',
+          borderColor: colors.primary.light
+        }}
       >
-        {/* Card decoration */}
-        <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-indigo-500/10 to-violet-500/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl pointer-events-none"></div>
-        <div className="absolute bottom-0 left-0 w-40 h-40 bg-gradient-to-tr from-emerald-500/10 to-indigo-500/10 rounded-full translate-y-1/2 -translate-x-1/2 blur-2xl pointer-events-none"></div>
+        {/* PlainID dot grid pattern - smaller version in the card */}
+        <div className="absolute top-0 right-0 w-64 h-64 rounded-full overflow-hidden opacity-10 -translate-y-1/3 translate-x-1/3 pointer-events-none">
+          <div style={{
+            backgroundImage: `radial-gradient(${colors.primary.default} 1px, transparent 1px)`,
+            backgroundSize: '15px 15px',
+            width: '100%',
+            height: '100%'
+          }}></div>
+        </div>
+        
+        <div className="absolute bottom-0 left-0 w-64 h-64 rounded-full overflow-hidden opacity-10 translate-y-1/3 -translate-x-1/3 pointer-events-none">
+          <div style={{
+            backgroundImage: `radial-gradient(${colors.primary.default} 1px, transparent 1px)`,
+            backgroundSize: '15px 15px',
+            width: '100%',
+            height: '100%'
+          }}></div>
+        </div>
         {activeStep === 0 && (
           <div className="space-y-6 animate-fadeIn">
             <h2 className="text-xl font-semibold text-slate-800 mb-4 flex items-center">
