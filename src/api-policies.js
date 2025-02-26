@@ -102,7 +102,7 @@ const APIPoliciesDemo = () => {
           <Shield className="mr-3 h-8 w-8 text-blue-600" />
           API Policies and PlainID Authorization
         </h1>
-        <p className="text-gray-600 mt-2">A Visual API authorization flow for a Wealth Management firm</p>
+        <p className="text-gray-600 mt-2">A visual API authorization flow for a Wealth Management firm</p>
       </div>
       
       {/* Simplified progress steps */}
