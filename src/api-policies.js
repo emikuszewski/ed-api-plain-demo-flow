@@ -88,7 +88,7 @@ const APIPoliciesDemo = () => {
   
   const resources = [
     { id: 'customer-data', name: 'Customer Data', icon: <Users size={20} /> },
-    { id: 'financial-records', name: 'Financial Records', icon: <Database size={20} /> },
+    { id: 'accounts', name: 'Accounts', icon: <Database size={20} /> },
     { id: 'system-settings', name: 'System Settings', icon: <Server size={20} /> }
   ];
   
@@ -100,7 +100,7 @@ const APIPoliciesDemo = () => {
       
       let allowed = hasPermission;
       
-      if (selectedResource === 'financial-records' && selectedUser.role !== 'Wealth Manager' && selectedUser.role !== 'Administrator') {
+      if (selectedResource === 'accounts' && selectedUser.role !== 'Wealth Manager' && selectedUser.role !== 'Administrator') {
         allowed = false;
       }
       
@@ -197,6 +197,66 @@ const APIPoliciesDemo = () => {
               backgroundImage: `linear-gradient(to right, ${colors.primary.default}, ${colors.primary.dark})`,
               fontFamily: "'Roboto', sans-serif", 
               fontWeight: 500 // Roboto Medium per guidelines
+          }}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L7.414 9H15a1 1 0 110 2H7.414l2.293 2.293a1 1 0 010 1.414z" clipRule="evenodd" />
+          </svg>
+          <span className="font-medium">Back</span>
+        </button>
+        
+        <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
+          <div className="flex space-x-2">
+            {steps.map((_, index) => (
+              <div 
+                key={index}
+                className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                  index === activeStep ? 'scale-125' : ''
+                }`}
+                style={{
+                  backgroundColor: index === activeStep ? colors.primary.default : 
+                                  index < activeStep ? colors.success.default : 
+                                  colors.secondary.medium
+                }}
+              ></div>
+            ))}
+          </div>
+        </div>
+        
+        <button
+          onClick={handleNext}
+          className="px-6 py-3 text-white rounded-xl shadow-lg hover:shadow-lg flex items-center transition-all duration-300 transform hover:translate-y-[-2px]"
+          style={{
+            background: `linear-gradient(to right, ${colors.primary.default}, ${colors.primary.dark})`,
+            fontFamily: "'Roboto', sans-serif",
+            fontWeight: 500 // Roboto Medium per guidelines
+          }}
+        >
+          {activeStep === steps.length - 1 ? (
+            <>
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clipRule="evenodd" />
+              </svg>
+              Restart Flow
+            </>
+          ) : (
+            <>
+              Next Step
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
+              </svg>
+            </>
+          )}
+          
+          {/* Add subtle glow effect to button */}
+          <div className="absolute inset-0 rounded-xl bg-white opacity-20 blur-xl animate-pulse-slow -z-10"></div>
+        </button>
+      </div>
+    </div>
+  );
+};
+
+export default APIPoliciesDemo; // Roboto Medium per guidelines
             }}>
             API Policies and Authorization
           </h1>
@@ -510,13 +570,13 @@ X-Actions: ${selectedActions.join(',')}`}
                   </div>
                 </div>
                 
-                {selectedResource === 'financial-records' && (
+                {selectedResource === 'accounts' && (
                   <div className="p-3 bg-white rounded-lg border border-red-100 flex items-center shadow-sm transition-all duration-300 hover:shadow-md hover:border-red-300">
                     <div className="mr-3 text-red-600 bg-red-100 p-2 rounded-full">
                       <AlertCircle className="h-5 w-5" />
                     </div>
                     <div className="text-sm">
-                      <strong>Special Policy:</strong> Financial Records require Wealth Manager or Administrator role
+                      <strong>Special Policy:</strong> Accounts require Wealth Manager or Administrator role
                     </div>
                   </div>
                 )}
@@ -777,64 +837,4 @@ X-Actions: ${selectedActions.join(',')}`}
             color: activeStep === 0 ? colors.secondary.medium : colors.primary.default, 
             borderColor: activeStep === 0 ? colors.secondary.medium + '50' : colors.primary.default + '50',
             fontFamily: "'Roboto', sans-serif",
-            fontWeight: 500 // Roboto Medium per guidelines
-          }}
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-            <path fillRule="evenodd" d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L7.414 9H15a1 1 0 110 2H7.414l2.293 2.293a1 1 0 010 1.414z" clipRule="evenodd" />
-          </svg>
-          <span className="font-medium">Back</span>
-        </button>
-        
-        <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
-          <div className="flex space-x-2">
-            {steps.map((_, index) => (
-              <div 
-                key={index}
-                className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                  index === activeStep ? 'scale-125' : ''
-                }`}
-                style={{
-                  backgroundColor: index === activeStep ? colors.primary.default : 
-                                  index < activeStep ? colors.success.default : 
-                                  colors.secondary.medium
-                }}
-              ></div>
-            ))}
-          </div>
-        </div>
-        
-        <button
-          onClick={handleNext}
-          className="px-6 py-3 text-white rounded-xl shadow-lg hover:shadow-lg flex items-center transition-all duration-300 transform hover:translate-y-[-2px]"
-          style={{
-            background: `linear-gradient(to right, ${colors.primary.default}, ${colors.primary.dark})`,
-            fontFamily: "'Roboto', sans-serif",
-            fontWeight: 500 // Roboto Medium per guidelines
-          }}
-        >
-          {activeStep === steps.length - 1 ? (
-            <>
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clipRule="evenodd" />
-              </svg>
-              Restart Flow
-            </>
-          ) : (
-            <>
-              Next Step
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
-              </svg>
-            </>
-          )}
-          
-          {/* Add subtle glow effect to button */}
-          <div className="absolute inset-0 rounded-xl bg-white opacity-20 blur-xl animate-pulse-slow -z-10"></div>
-        </button>
-      </div>
-    </div>
-  );
-};
-
-export default APIPoliciesDemo;
+            fontWeight: 500
