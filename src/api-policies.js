@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Shield, Lock, Key, User, Users, Database, Check, X, AlertCircle, Server, Globe } from 'lucide-react';
 
+// redeploy for API integration
+
 // PlainID API endpoints configuration
 const API_BASE_URL = process.env.REACT_APP_PLAINID_API_URL || 'https://presales-platform.us1.plainid.io/v1';
 const API_KEY = process.env.REACT_APP_PLAINID_API_KEY || 'oye5i0uZ6XSt22aspTilh2YokktFUPD8';
