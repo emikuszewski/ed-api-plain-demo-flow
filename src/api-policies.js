@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Shield, Lock, Key, User, Users, Database, Check, X, AlertCircle, Server, Globe } from 'lucide-react';
 
-// PlainID API with CORS proxy configuration
-const CORS_PROXY = 'https://corsproxy.io/?';
+// PlainID API with CORS proxy configuration - using alternative proxy
+const CORS_PROXY = 'https://proxy.cors.sh/';
 const API_BASE_URL = 'https://presales-platform.us1.plainid.io/v1';
 const API_KEY = 'oye5i0uZ6XSt22aspTilh2YokktFUPD8';
-const USERS_ENDPOINT = `${CORS_PROXY}${encodeURIComponent(API_BASE_URL + '/users')}`;
-const ACTIONS_ENDPOINT = `${CORS_PROXY}${encodeURIComponent(API_BASE_URL + '/actions')}`;
+const USERS_ENDPOINT = `${CORS_PROXY}${API_BASE_URL}/users`;
+const ACTIONS_ENDPOINT = `${CORS_PROXY}${API_BASE_URL}/actions`;
 
 const APIPoliciesDemo = () => {
   const [activeStep, setActiveStep] = useState(0);
@@ -108,7 +108,8 @@ const APIPoliciesDemo = () => {
       const response = await fetch(USERS_ENDPOINT, {
         headers: {
           'Authorization': `Bearer ${API_KEY}`,
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'x-cors-api-key': 'temp_17d05830f2b05adab714c0182d6e1292' // Required for cors.sh proxy
         }
       });
       
@@ -145,7 +146,8 @@ const APIPoliciesDemo = () => {
       const response = await fetch(ACTIONS_ENDPOINT, {
         headers: {
           'Authorization': `Bearer ${API_KEY}`,
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'x-cors-api-key': 'temp_17d05830f2b05adab714c0182d6e1292' // Required for cors.sh proxy
         }
       });
       
