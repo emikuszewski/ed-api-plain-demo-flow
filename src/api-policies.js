@@ -1,11 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { Shield, Lock, Key, User, Users, Database, Check, X, AlertCircle, Server, Globe } from 'lucide-react';
 
+// Mock data configuration
+// When you're ready to switch to the real API, uncomment the API_BASE_URL and endpoints below
+// and update the fetchUsers and fetchActions functions to use actual fetch calls.
+// const API_BASE_URL = process.env.REACT_APP_PLAINID_API_URL || 'https://api.plainid.io';
+// const USERS_ENDPOINT = `${API_BASE_URL}/users`;
+// const ACTIONS_ENDPOINT = `${API_BASE_URL}/actions`;
+
 const APIPoliciesDemo = () => {
   const [activeStep, setActiveStep] = useState(0);
   const [showDecision, setShowDecision] = useState(false);
   const [authorization, setAuthorization] = useState(null);
   const [animateTransition, setAnimateTransition] = useState(false);
+  
+  // Dynamic data states
+  const [users, setUsers] = useState([]);
+  const [actions, setActions] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
   
   // PlainID brand colors (from brand guidelines)
   const colors = {
@@ -56,18 +69,158 @@ const APIPoliciesDemo = () => {
     { id: 'response', title: 'API Response' }
   ];
   
-  const users = [
-    { id: 1, name: 'Michael Chen', role: 'Administrator', permissions: ['READ', 'WRITE', 'DELETE', 'CREATE', 'UPDATE'] },
-    { id: 2, name: 'Raj Patel', role: 'User', permissions: ['READ'] },
-    { id: 3, name: 'Sara Jameson', role: 'Wealth Manager', permissions: ['READ', 'WRITE', 'CREATE', 'UPDATE'] }
+  // Mock data for development and testing
+  const mockUsers = [
+    { 
+      id: 1, 
+      name: 'Michael Chen', 
+      role: 'Administrator', 
+      email: 'michael.chen@example.com',
+      department: 'IT',
+      permissions: ['READ', 'WRITE', 'DELETE', 'CREATE', 'UPDATE'] 
+    },
+    { 
+      id: 2, 
+      name: 'Raj Patel', 
+      role: 'User', 
+      email: 'raj.patel@example.com',
+      department: 'Sales',
+      permissions: ['READ'] 
+    },
+    { 
+      id: 3, 
+      name: 'Sara Jameson', 
+      role: 'Wealth Manager', 
+      email: 'sara.jameson@example.com',
+      department: 'Finance',
+      permissions: ['READ', 'WRITE', 'CREATE', 'UPDATE'] 
+    },
+    { 
+      id: 4, 
+      name: 'Emma Wilson', 
+      role: 'Wealth Manager', 
+      email: 'emma.wilson@example.com',
+      department: 'Finance',
+      permissions: ['READ', 'WRITE', 'CREATE'] 
+    },
+    { 
+      id: 5, 
+      name: 'James Rodriguez', 
+      role: 'Administrator', 
+      email: 'james.rodriguez@example.com',
+      department: 'IT',
+      permissions: ['READ', 'WRITE', 'DELETE', 'CREATE', 'UPDATE'] 
+    }
   ];
   
-  const [selectedUser, setSelectedUser] = useState(users[0]);
-  const [selectedResource, setSelectedResource] = useState('customer-data');
-  const [selectedActions, setSelectedActions] = useState(['READ']);
+  const mockActions = ['READ', 'WRITE', 'DELETE', 'CREATE', 'UPDATE', 'APPROVE', 'REJECT'];
   
+  // User and action selection states
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [selectedResource, setSelectedResource] = useState('customer-data');
+  const [selectedActions, setSelectedActions] = useState([]);
+  
+  // Mock fetch users function - simulates API request
+  const fetchMockUsers = () => {
+    // Simulate a network request with setTimeout
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(mockUsers);
+      }, 1000); // Simulate 1 second loading time
+    });
+  };
+  
+  // Mock fetch actions function - simulates API request
+  const fetchMockActions = () => {
+    // Simulate a network request with setTimeout
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(mockActions);
+      }, 800); // Simulate 0.8 second loading time
+    });
+  };
+  
+  // When ready to switch to real API, implement these functions:
+  /*
+  const fetchUsers = async () => {
+    try {
+      const response = await fetch(USERS_ENDPOINT, {
+        headers: {
+          'Authorization': `Bearer ${process.env.REACT_APP_PLAINID_API_KEY || 'default-api-key'}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch users: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      return data.users || data; // Adjust based on actual API response structure
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      throw error;
+    }
+  };
+  
+  const fetchActions = async () => {
+    try {
+      const response = await fetch(ACTIONS_ENDPOINT, {
+        headers: {
+          'Authorization': `Bearer ${process.env.REACT_APP_PLAINID_API_KEY || 'default-api-key'}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch actions: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      return data.actions || data; // Adjust based on actual API response structure
+    } catch (error) {
+      console.error("Error fetching actions:", error);
+      throw error;
+    }
+  };
+  */
+  
+  // Load data on component mount
   useEffect(() => {
-    // Add transition animation when changing steps
+    const loadData = async () => {
+      setIsLoading(true);
+      setError(null);
+      
+      try {
+        // Fetch both users and actions in parallel (using mock functions)
+        const [usersData, actionsData] = await Promise.all([
+          fetchMockUsers(),
+          fetchMockActions()
+        ]);
+        
+        setUsers(usersData);
+        setActions(actionsData);
+        
+        // Set initial selected user and action
+        if (usersData.length > 0) {
+          setSelectedUser(usersData[0]);
+        }
+        if (actionsData.length > 0) {
+          setSelectedActions([actionsData[0]]);
+        }
+      } catch (err) {
+        console.error("Error loading mock data:", err);
+        setError("Error loading data. Please try again.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    loadData();
+  }, []);
+  
+  // Animation transition effect
+  useEffect(() => {
     if (animateTransition) {
       const timer = setTimeout(() => {
         setAnimateTransition(false);
@@ -92,9 +245,9 @@ const APIPoliciesDemo = () => {
     { id: 'system-settings', name: 'System Settings', icon: <Server size={20} /> }
   ];
   
-  const actions = ['READ', 'WRITE', 'DELETE', 'CREATE', 'UPDATE'];
-  
   const evaluateAccess = () => {
+    if (!selectedUser || selectedActions.length === 0) return;
+    
     const permissionResults = selectedActions.map(action => {
       const hasPermission = selectedUser.permissions.includes(action);
       
@@ -183,6 +336,27 @@ const APIPoliciesDemo = () => {
     return colors.secondary.medium;
   };
   
+  // Loading state UI
+  if (isLoading) {
+    return (
+      <div className="flex flex-col min-h-screen bg-gradient-to-br from-neutral-light to-primary-dark p-4 transition-all duration-300 relative overflow-hidden" style={{fontFamily: "'Roboto', sans-serif"}}>
+        <div className="absolute inset-0 overflow-hidden pointer-events-none" style={dotPatternStyle}></div>
+        <div className="flex items-center justify-center h-screen">
+          <div className="glass-effect p-10 rounded-xl shadow-lg flex flex-col items-center">
+            <div className="animate-pulse-slow">
+              <Shield className="h-16 w-16 mb-4" style={{color: colors.primary.default}} />
+            </div>
+            <h2 className="text-xl font-semibold" style={{color: colors.primary.default}}>Loading API Policies Demo...</h2>
+            <p className="text-slate-600 mt-2">Fetching users and actions from PlainID</p>
+            <div className="mt-4 w-64 h-2 bg-slate-200 rounded-full overflow-hidden">
+              <div className="h-full bg-blue-600 rounded-full animate-gradient" style={{width: '70%'}}></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-neutral-light to-primary-dark p-4 transition-all duration-300 relative overflow-hidden" style={{fontFamily: "'Roboto', sans-serif"}}>
       {/* PlainID dot grid pattern background */}
@@ -204,6 +378,14 @@ const APIPoliciesDemo = () => {
         <p className="mt-3 max-w-xl mx-auto" style={{color: colors.secondary.default, fontFamily: "'Roboto', sans-serif"}}>
           A visual API authorization flow for a Wealth Management firm
         </p>
+        
+        {/* Show API status indicator if there was an error */}
+        {error && (
+          <div className="mt-2 inline-flex items-center px-3 py-1 rounded-full text-sm bg-red-100 text-red-700 border border-red-200">
+            <AlertCircle className="h-4 w-4 mr-1" />
+            Using fallback data (API error: {error})
+          </div>
+        )}
       </div>
       
       {/* Refined progress steps */}
@@ -321,7 +503,7 @@ const APIPoliciesDemo = () => {
                       key={user.id}
                       onClick={() => setSelectedUser(user)}
                       className={`cursor-pointer p-4 rounded-lg transition-all duration-300 transform ${
-                        selectedUser.id === user.id 
+                        selectedUser && selectedUser.id === user.id 
                           ? 'bg-indigo-200/80 border-l-4 border-indigo-600 shadow-md translate-x-1' 
                           : 'bg-white/80 hover:bg-indigo-100/60 hover:translate-x-1 hover:shadow-md'
                       }`}
@@ -417,8 +599,8 @@ const APIPoliciesDemo = () => {
                 <pre className="text-emerald-400 p-5 overflow-x-auto text-sm font-mono">
 {`GET /api/${selectedResource}
 Authorization: Bearer jwt.token.here
-X-User-ID: ${selectedUser.id}
-X-User-Role: ${selectedUser.role}
+X-User-ID: ${selectedUser ? selectedUser.id : ''}
+X-User-Role: ${selectedUser ? selectedUser.role : ''}
 X-Actions: ${selectedActions.join(',')}`}
                 </pre>
               </div>
@@ -450,7 +632,7 @@ X-Actions: ${selectedActions.join(',')}`}
                 <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-3 rounded-lg shadow-lg border border-blue-200 transition-all duration-300 hover:shadow-xl">
                   <div className="flex items-center text-sm">
                     <User className="mr-2 h-5 w-5 text-blue-600" />
-                    <span className="font-medium">User: <strong>{selectedUser.name}</strong></span>
+                    <span className="font-medium">User: <strong>{selectedUser ? selectedUser.name : ''}</strong></span>
                   </div>
                 </div>
                 
@@ -471,7 +653,7 @@ X-Actions: ${selectedActions.join(',')}`}
                 <div className="absolute right-0 top-1/2 transform translate-x-3/4 -translate-y-1/2 bg-white p-3 rounded-lg shadow-lg border border-blue-200 transition-all duration-300 hover:shadow-xl">
                   <div className="flex items-center text-sm">
                     <Shield className="mr-2 h-5 w-5 text-red-600" />
-                    <span className="font-medium">Role: <strong>{selectedUser.role}</strong></span>
+                    <span className="font-medium">Role: <strong>{selectedUser ? selectedUser.role : ''}</strong></span>
                   </div>
                 </div>
               </div>
@@ -488,7 +670,7 @@ X-Actions: ${selectedActions.join(',')}`}
                     <Users className="h-5 w-5" />
                   </div>
                   <div className="text-sm">
-                    User <strong>{selectedUser.name}</strong> has role <strong>{selectedUser.role}</strong> with permissions: <strong>{selectedUser.permissions.join(', ')}</strong>
+                    User <strong>{selectedUser ? selectedUser.name : ''}</strong> has role <strong>{selectedUser ? selectedUser.role : ''}</strong> with permissions: <strong>{selectedUser ? selectedUser.permissions.join(', ') : ''}</strong>
                   </div>
                 </div>
                 
@@ -573,8 +755,8 @@ X-Actions: ${selectedActions.join(',')}`}
                   </h3>
                   <p className="text-slate-600 mt-2 text-center max-w-md">
                     {authorization?.overall ? 
-                      `${selectedUser.name} is authorized to perform all requested actions on ${selectedResource}` :
-                      `${selectedUser.name} is not authorized to perform all requested actions on ${selectedResource}`
+                      `${selectedUser ? selectedUser.name : ''} is authorized to perform all requested actions on ${selectedResource}` :
+                      `${selectedUser ? selectedUser.name : ''} is not authorized to perform all requested actions on ${selectedResource}`
                     }
                   </p>
                   
@@ -614,8 +796,8 @@ X-Actions: ${selectedActions.join(',')}`}
                   <div className="mt-4 p-3 bg-white rounded-lg text-sm border border-slate-200 w-full transition-all duration-300 hover:shadow-md">
                     <pre className="whitespace-pre-wrap">
 {`{
-  "subject": "${selectedUser.name}",
-  "role": "${selectedUser.role}",
+  "subject": "${selectedUser ? selectedUser.name : ''}",
+  "role": "${selectedUser ? selectedUser.role : ''}",
   "resource": "${selectedResource}",
   "actions": ${JSON.stringify(selectedActions)},
   "overallAllowed": ${authorization?.overall},
@@ -733,7 +915,7 @@ X-Actions: ${selectedActions.join(',')}`}
                   <div className="space-y-3">
                     <div className="grid grid-cols-2 gap-3 bg-white p-4 rounded-lg shadow-sm">
                       <div className="text-sm text-slate-600 font-medium">User:</div>
-                      <div className="text-sm font-medium bg-indigo-50 p-2 rounded transition-all duration-300 hover:bg-indigo-100">{selectedUser.name}</div>
+                      <div className="text-sm font-medium bg-indigo-50 p-2 rounded transition-all duration-300 hover:bg-indigo-100">{selectedUser ? selectedUser.name : ''}</div>
                       
                       <div className="text-sm text-slate-600 font-medium">Resource:</div>
                       <div className="text-sm font-medium bg-violet-50 p-2 rounded transition-all duration-300 hover:bg-violet-100">{selectedResource}</div>
