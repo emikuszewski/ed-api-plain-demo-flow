@@ -1,12 +1,157 @@
 import React, { useState, useEffect } from 'react';
 import { Shield, Lock, Key, User, Users, Database, Check, X, AlertCircle, Server, Globe } from 'lucide-react';
 
-// PlainID API with CORS proxy configuration - using alternative proxy
-const CORS_PROXY = 'https://proxy.cors.sh/';
+// ========== API CONFIGURATION ==========
+// Set this to false to use mock data, true to use real API
+const USE_REAL_API = false;
+
+// Real API configuration - for when CORS issues are resolved
 const API_BASE_URL = 'https://presales-platform.us1.plainid.io/v1';
 const API_KEY = 'oye5i0uZ6XSt22aspTilh2YokktFUPD8';
-const USERS_ENDPOINT = `${CORS_PROXY}${API_BASE_URL}/users`;
-const ACTIONS_ENDPOINT = `${CORS_PROXY}${API_BASE_URL}/actions`;
+const USERS_ENDPOINT = `${API_BASE_URL}/users`;
+const ACTIONS_ENDPOINT = `${API_BASE_URL}/actions`;
+
+// ========== MOCK DATA ==========
+// Used when USE_REAL_API is false
+const mockUsers = [
+  { 
+    id: 1, 
+    name: 'Michael Chen', 
+    role: 'Administrator', 
+    email: 'michael.chen@example.com',
+    department: 'IT',
+    permissions: ['READ', 'WRITE', 'DELETE', 'CREATE', 'UPDATE'] 
+  },
+  { 
+    id: 2, 
+    name: 'Raj Patel', 
+    role: 'User', 
+    email: 'raj.patel@example.com',
+    department: 'Sales',
+    permissions: ['READ'] 
+  },
+  { 
+    id: 3, 
+    name: 'Sara Jameson', 
+    role: 'Wealth Manager', 
+    email: 'sara.jameson@example.com',
+    department: 'Finance',
+    permissions: ['READ', 'WRITE', 'CREATE', 'UPDATE'] 
+  },
+  { 
+    id: 4, 
+    name: 'Emma Wilson', 
+    role: 'Wealth Manager', 
+    email: 'emma.wilson@example.com',
+    department: 'Finance',
+    permissions: ['READ', 'WRITE', 'CREATE'] 
+  },
+  { 
+    id: 5, 
+    name: 'James Rodriguez', 
+    role: 'Administrator', 
+    email: 'james.rodriguez@example.com',
+    department: 'IT',
+    permissions: ['READ', 'WRITE', 'DELETE', 'CREATE', 'UPDATE'] 
+  }
+];
+
+const mockActions = ['READ', 'WRITE', 'DELETE', 'CREATE', 'UPDATE', 'APPROVE', 'REJECT'];
+
+// ========== API SERVICE FUNCTIONS ==========
+// Fetches users from either mock data or real API based on USE_REAL_API toggle
+const fetchUsers = async () => {
+  // For demo - use mock data
+  if (!USE_REAL_API) {
+    console.log("Using mock users data");
+    // Simulate API delay
+    return new Promise(resolve => {
+      setTimeout(() => resolve(mockUsers), 800);
+    });
+  }
+  
+  // Real API implementation
+  try {
+    console.log("Fetching users from real API:", USERS_ENDPOINT);
+    const response = await fetch(USERS_ENDPOINT, {
+      headers: {
+        'Authorization': `Bearer ${API_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      // Add mode and credentials to help with CORS
+      mode: 'cors',
+      credentials: 'omit'
+    });
+    
+    if (!response.ok) {
+      throw new Error(`Failed to fetch users: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    console.log("Users API response:", data);
+    
+    // Map the API response to the format we need
+    const formattedUsers = Array.isArray(data.data) 
+      ? data.data.map(user => ({
+          id: user.id || user.userId || user._id,
+          name: user.displayName || user.name || `User ${user.id}`,
+          role: user.role || user.userRole || 'User',
+          email: user.email || `user${user.id}@example.com`,
+          permissions: user.permissions || ['READ']
+        }))
+      : [];
+
+    return formattedUsers;
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    console.log("Falling back to mock data");
+    return mockUsers; // Fallback to mock data on error
+  }
+};
+
+// Fetches actions from either mock data or real API based on USE_REAL_API toggle
+const fetchActions = async () => {
+  // For demo - use mock data
+  if (!USE_REAL_API) {
+    console.log("Using mock actions data");
+    // Simulate API delay
+    return new Promise(resolve => {
+      setTimeout(() => resolve(mockActions), 600);
+    });
+  }
+  
+  // Real API implementation
+  try {
+    console.log("Fetching actions from real API:", ACTIONS_ENDPOINT);
+    const response = await fetch(ACTIONS_ENDPOINT, {
+      headers: {
+        'Authorization': `Bearer ${API_KEY}`,
+        'Content-Type': 'application/json'
+      },
+      // Add mode and credentials to help with CORS
+      mode: 'cors',
+      credentials: 'omit'
+    });
+    
+    if (!response.ok) {
+      throw new Error(`Failed to fetch actions: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    console.log("Actions API response:", data);
+    
+    // Map the API response to the format we need
+    const formattedActions = Array.isArray(data.data) 
+      ? data.data.map(action => action.name || action.action || action)
+      : [];
+
+    return formattedActions.length > 0 ? formattedActions : mockActions;
+  } catch (error) {
+    console.error("Error fetching actions:", error);
+    console.log("Falling back to mock data");
+    return mockActions; // Fallback to mock data on error
+  }
+};
 
 const APIPoliciesDemo = () => {
   const [activeStep, setActiveStep] = useState(0);
@@ -19,6 +164,69 @@ const APIPoliciesDemo = () => {
   const [actions, setActions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [selectedResource, setSelectedResource] = useState('customer-data');
+  const [selectedActions, setSelectedActions] = useState([]);
+  
+  // Load data on component mount
+  useEffect(() => {
+    const loadData = async () => {
+      setIsLoading(true);
+      setError(null);
+      
+      try {
+        // Fetch both users and actions in parallel
+        const [usersData, actionsData] = await Promise.all([
+          fetchUsers(),
+          fetchActions()
+        ]);
+        
+        setUsers(usersData);
+        setActions(actionsData);
+        
+        // Set initial selected user and action
+        if (usersData.length > 0) {
+          setSelectedUser(usersData[0]);
+        }
+        if (actionsData.length > 0) {
+          setSelectedActions([actionsData[0]]);
+        }
+      } catch (err) {
+        console.error("Error loading data:", err);
+        setError("Error loading data: " + err.message);
+        
+        // Fall back to mock data if API calls fail
+        setUsers(mockUsers);
+        setActions(mockActions);
+        setSelectedUser(mockUsers[0]);
+        setSelectedActions([mockActions[0]]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    loadData();
+  }, []);
+  
+  // Animation transition effect
+  useEffect(() => {
+    if (animateTransition) {
+      const timer = setTimeout(() => {
+        setAnimateTransition(false);
+      }, 400);
+      return () => clearTimeout(timer);
+    }
+  }, [animateTransition]);
+  
+  const toggleAction = (action) => {
+    if (selectedActions.includes(action)) {
+      if (selectedActions.length > 1) {
+        setSelectedActions(selectedActions.filter(a => a !== action));
+      }
+    } else {
+      setSelectedActions([...selectedActions, action]);
+    }
+  };
   
   // PlainID brand colors (from brand guidelines)
   const colors = {
@@ -68,172 +276,6 @@ const APIPoliciesDemo = () => {
     { id: 'decision', title: 'Authorization Decision' },
     { id: 'response', title: 'API Response' }
   ];
-  
-  // Fallback data in case API calls fail
-  const defaultUsers = [
-    { 
-      id: 1, 
-      name: 'Michael Chen', 
-      role: 'Administrator', 
-      email: 'michael.chen@example.com',
-      permissions: ['READ', 'WRITE', 'DELETE', 'CREATE', 'UPDATE'] 
-    },
-    { 
-      id: 2, 
-      name: 'Raj Patel', 
-      role: 'User', 
-      email: 'raj.patel@example.com',
-      permissions: ['READ'] 
-    },
-    { 
-      id: 3, 
-      name: 'Sara Jameson', 
-      role: 'Wealth Manager', 
-      email: 'sara.jameson@example.com',
-      permissions: ['READ', 'WRITE', 'CREATE', 'UPDATE'] 
-    }
-  ];
-  
-  const defaultActions = ['READ', 'WRITE', 'DELETE', 'CREATE', 'UPDATE'];
-  
-  // User and action selection states
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [selectedResource, setSelectedResource] = useState('customer-data');
-  const [selectedActions, setSelectedActions] = useState([]);
-  
-  // Fetch users data from PlainID API
-  const fetchUsers = async () => {
-    try {
-      console.log("Fetching users from:", USERS_ENDPOINT);
-      const response = await fetch(USERS_ENDPOINT, {
-        headers: {
-          'Authorization': `Bearer ${API_KEY}`,
-          'Content-Type': 'application/json',
-          'x-cors-api-key': 'temp_17d05830f2b05adab714c0182d6e1292' // Required for cors.sh proxy
-        }
-      });
-      
-      if (!response.ok) {
-        throw new Error(`Failed to fetch users: ${response.status}`);
-      }
-      
-      const data = await response.json();
-      console.log("Users API response:", data);
-      
-      // Map the API response to the format we need
-      // Adjust this mapping based on the actual API response structure
-      const formattedUsers = Array.isArray(data.data) 
-        ? data.data.map(user => ({
-            id: user.id || user.userId || user._id,
-            name: user.displayName || user.name || `User ${user.id}`,
-            role: user.role || user.userRole || 'User',
-            email: user.email || `user${user.id}@example.com`,
-            permissions: user.permissions || ['READ']
-          }))
-        : [];
-
-      return formattedUsers;
-    } catch (error) {
-      console.error("Error fetching users:", error);
-      throw error;
-    }
-  };
-  
-  // Fetch actions data from PlainID API
-  const fetchActions = async () => {
-    try {
-      console.log("Fetching actions from:", ACTIONS_ENDPOINT);
-      const response = await fetch(ACTIONS_ENDPOINT, {
-        headers: {
-          'Authorization': `Bearer ${API_KEY}`,
-          'Content-Type': 'application/json',
-          'x-cors-api-key': 'temp_17d05830f2b05adab714c0182d6e1292' // Required for cors.sh proxy
-        }
-      });
-      
-      if (!response.ok) {
-        throw new Error(`Failed to fetch actions: ${response.status}`);
-      }
-      
-      const data = await response.json();
-      console.log("Actions API response:", data);
-      
-      // Map the API response to the format we need
-      // Adjust this mapping based on the actual API response structure
-      const formattedActions = Array.isArray(data.data) 
-        ? data.data.map(action => action.name || action.action || action)
-        : [];
-
-      return formattedActions.length > 0 ? formattedActions : defaultActions;
-    } catch (error) {
-      console.error("Error fetching actions:", error);
-      throw error;
-    }
-  };
-  
-  // Load data on component mount
-  useEffect(() => {
-    const loadData = async () => {
-      setIsLoading(true);
-      setError(null);
-      
-      try {
-        // Fetch both users and actions in parallel
-        const [usersData, actionsData] = await Promise.all([
-          fetchUsers(),
-          fetchActions()
-        ]);
-        
-        // If we got empty arrays from the API, fall back to default data
-        const finalUsers = usersData.length > 0 ? usersData : defaultUsers;
-        const finalActions = actionsData.length > 0 ? actionsData : defaultActions;
-        
-        setUsers(finalUsers);
-        setActions(finalActions);
-        
-        // Set initial selected user and action
-        if (finalUsers.length > 0) {
-          setSelectedUser(finalUsers[0]);
-        }
-        if (finalActions.length > 0) {
-          setSelectedActions([finalActions[0]]);
-        }
-      } catch (err) {
-        console.error("Error loading data:", err);
-        setError("API Error: " + err.message);
-        
-        // Fall back to default data if API calls fail
-        setUsers(defaultUsers);
-        setActions(defaultActions);
-        setSelectedUser(defaultUsers[0]);
-        setSelectedActions([defaultActions[0]]);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    
-    loadData();
-  }, []);
-  
-  // Animation transition effect
-  useEffect(() => {
-    if (animateTransition) {
-      const timer = setTimeout(() => {
-        setAnimateTransition(false);
-      }, 400);
-      return () => clearTimeout(timer);
-    }
-  }, [animateTransition]);
-  
-  const toggleAction = (action) => {
-    if (selectedActions.includes(action)) {
-      if (selectedActions.length > 1) {
-        setSelectedActions(selectedActions.filter(a => a !== action));
-      }
-    } else {
-      setSelectedActions([...selectedActions, action]);
-    }
-  };
   
   const resources = [
     { id: 'customer-data', name: 'Customer Data', icon: <Users size={20} /> },
