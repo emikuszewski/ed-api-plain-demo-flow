@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Shield, Lock, Key, User, Users, Database, Check, X, AlertCircle, Server, Globe } from 'lucide-react';
 
-// Mock data configuration
-// When you're ready to switch to the real API, uncomment the API_BASE_URL and endpoints below
-// and update the fetchUsers and fetchActions functions to use actual fetch calls.
-// const API_BASE_URL = process.env.REACT_APP_PLAINID_API_URL || 'https://api.plainid.io';
-// const USERS_ENDPOINT = `${API_BASE_URL}/users`;
-// const ACTIONS_ENDPOINT = `${API_BASE_URL}/actions`;
+// PlainID API endpoints configuration
+const API_BASE_URL = process.env.REACT_APP_PLAINID_API_URL || 'https://presales-platform.us1.plainid.io/v1';
+const API_KEY = process.env.REACT_APP_PLAINID_API_KEY || 'oye5i0uZ6XSt22aspTilh2YokktFUPD8';
+const USERS_ENDPOINT = `${API_BASE_URL}/users`;
+const ACTIONS_ENDPOINT = `${API_BASE_URL}/actions`;
 
 const APIPoliciesDemo = () => {
   const [activeStep, setActiveStep] = useState(0);
@@ -69,14 +68,13 @@ const APIPoliciesDemo = () => {
     { id: 'response', title: 'API Response' }
   ];
   
-  // Mock data for development and testing
-  const mockUsers = [
+  // Fallback data in case API calls fail
+  const defaultUsers = [
     { 
       id: 1, 
       name: 'Michael Chen', 
       role: 'Administrator', 
       email: 'michael.chen@example.com',
-      department: 'IT',
       permissions: ['READ', 'WRITE', 'DELETE', 'CREATE', 'UPDATE'] 
     },
     { 
@@ -84,7 +82,6 @@ const APIPoliciesDemo = () => {
       name: 'Raj Patel', 
       role: 'User', 
       email: 'raj.patel@example.com',
-      department: 'Sales',
       permissions: ['READ'] 
     },
     { 
@@ -92,61 +89,24 @@ const APIPoliciesDemo = () => {
       name: 'Sara Jameson', 
       role: 'Wealth Manager', 
       email: 'sara.jameson@example.com',
-      department: 'Finance',
       permissions: ['READ', 'WRITE', 'CREATE', 'UPDATE'] 
-    },
-    { 
-      id: 4, 
-      name: 'Emma Wilson', 
-      role: 'Wealth Manager', 
-      email: 'emma.wilson@example.com',
-      department: 'Finance',
-      permissions: ['READ', 'WRITE', 'CREATE'] 
-    },
-    { 
-      id: 5, 
-      name: 'James Rodriguez', 
-      role: 'Administrator', 
-      email: 'james.rodriguez@example.com',
-      department: 'IT',
-      permissions: ['READ', 'WRITE', 'DELETE', 'CREATE', 'UPDATE'] 
     }
   ];
   
-  const mockActions = ['READ', 'WRITE', 'DELETE', 'CREATE', 'UPDATE', 'APPROVE', 'REJECT'];
+  const defaultActions = ['READ', 'WRITE', 'DELETE', 'CREATE', 'UPDATE'];
   
   // User and action selection states
   const [selectedUser, setSelectedUser] = useState(null);
   const [selectedResource, setSelectedResource] = useState('customer-data');
   const [selectedActions, setSelectedActions] = useState([]);
   
-  // Mock fetch users function - simulates API request
-  const fetchMockUsers = () => {
-    // Simulate a network request with setTimeout
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(mockUsers);
-      }, 1000); // Simulate 1 second loading time
-    });
-  };
-  
-  // Mock fetch actions function - simulates API request
-  const fetchMockActions = () => {
-    // Simulate a network request with setTimeout
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(mockActions);
-      }, 800); // Simulate 0.8 second loading time
-    });
-  };
-  
-  // When ready to switch to real API, implement these functions:
-  /*
+  // Fetch users data from PlainID API
   const fetchUsers = async () => {
     try {
+      console.log("Fetching users from:", USERS_ENDPOINT);
       const response = await fetch(USERS_ENDPOINT, {
         headers: {
-          'Authorization': `Bearer ${process.env.REACT_APP_PLAINID_API_KEY || 'default-api-key'}`,
+          'Authorization': `Bearer ${API_KEY}`,
           'Content-Type': 'application/json'
         }
       });
@@ -156,18 +116,34 @@ const APIPoliciesDemo = () => {
       }
       
       const data = await response.json();
-      return data.users || data; // Adjust based on actual API response structure
+      console.log("Users API response:", data);
+      
+      // Map the API response to the format we need
+      // Adjust this mapping based on the actual API response structure
+      const formattedUsers = Array.isArray(data.data) 
+        ? data.data.map(user => ({
+            id: user.id || user.userId || user._id,
+            name: user.displayName || user.name || `User ${user.id}`,
+            role: user.role || user.userRole || 'User',
+            email: user.email || `user${user.id}@example.com`,
+            permissions: user.permissions || ['READ']
+          }))
+        : [];
+
+      return formattedUsers;
     } catch (error) {
       console.error("Error fetching users:", error);
       throw error;
     }
   };
   
+  // Fetch actions data from PlainID API
   const fetchActions = async () => {
     try {
+      console.log("Fetching actions from:", ACTIONS_ENDPOINT);
       const response = await fetch(ACTIONS_ENDPOINT, {
         headers: {
-          'Authorization': `Bearer ${process.env.REACT_APP_PLAINID_API_KEY || 'default-api-key'}`,
+          'Authorization': `Bearer ${API_KEY}`,
           'Content-Type': 'application/json'
         }
       });
@@ -177,13 +153,20 @@ const APIPoliciesDemo = () => {
       }
       
       const data = await response.json();
-      return data.actions || data; // Adjust based on actual API response structure
+      console.log("Actions API response:", data);
+      
+      // Map the API response to the format we need
+      // Adjust this mapping based on the actual API response structure
+      const formattedActions = Array.isArray(data.data) 
+        ? data.data.map(action => action.name || action.action || action)
+        : [];
+
+      return formattedActions.length > 0 ? formattedActions : defaultActions;
     } catch (error) {
       console.error("Error fetching actions:", error);
       throw error;
     }
   };
-  */
   
   // Load data on component mount
   useEffect(() => {
@@ -192,25 +175,35 @@ const APIPoliciesDemo = () => {
       setError(null);
       
       try {
-        // Fetch both users and actions in parallel (using mock functions)
+        // Fetch both users and actions in parallel
         const [usersData, actionsData] = await Promise.all([
-          fetchMockUsers(),
-          fetchMockActions()
+          fetchUsers(),
+          fetchActions()
         ]);
         
-        setUsers(usersData);
-        setActions(actionsData);
+        // If we got empty arrays from the API, fall back to default data
+        const finalUsers = usersData.length > 0 ? usersData : defaultUsers;
+        const finalActions = actionsData.length > 0 ? actionsData : defaultActions;
+        
+        setUsers(finalUsers);
+        setActions(finalActions);
         
         // Set initial selected user and action
-        if (usersData.length > 0) {
-          setSelectedUser(usersData[0]);
+        if (finalUsers.length > 0) {
+          setSelectedUser(finalUsers[0]);
         }
-        if (actionsData.length > 0) {
-          setSelectedActions([actionsData[0]]);
+        if (finalActions.length > 0) {
+          setSelectedActions([finalActions[0]]);
         }
       } catch (err) {
-        console.error("Error loading mock data:", err);
-        setError("Error loading data. Please try again.");
+        console.error("Error loading data:", err);
+        setError("API Error: " + err.message);
+        
+        // Fall back to default data if API calls fail
+        setUsers(defaultUsers);
+        setActions(defaultActions);
+        setSelectedUser(defaultUsers[0]);
+        setSelectedActions([defaultActions[0]]);
       } finally {
         setIsLoading(false);
       }
@@ -383,7 +376,7 @@ const APIPoliciesDemo = () => {
         {error && (
           <div className="mt-2 inline-flex items-center px-3 py-1 rounded-full text-sm bg-red-100 text-red-700 border border-red-200">
             <AlertCircle className="h-4 w-4 mr-1" />
-            Using fallback data (API error: {error})
+            {error} (using fallback data)
           </div>
         )}
       </div>
@@ -516,6 +509,11 @@ const APIPoliciesDemo = () => {
                           'bg-blue-100 text-blue-700'
                         }`}>{user.role}</span>
                       </div>
+                      {user.email && (
+                        <div className="text-xs text-slate-500 mt-1">
+                          {user.email}
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -598,7 +596,7 @@ const APIPoliciesDemo = () => {
                 </div>
                 <pre className="text-emerald-400 p-5 overflow-x-auto text-sm font-mono">
 {`GET /api/${selectedResource}
-Authorization: Bearer jwt.token.here
+Authorization: Bearer ${API_KEY.substring(0, 8)}...${API_KEY.substring(API_KEY.length - 4)}
 X-User-ID: ${selectedUser ? selectedUser.id : ''}
 X-User-Role: ${selectedUser ? selectedUser.role : ''}
 X-Actions: ${selectedActions.join(',')}`}
