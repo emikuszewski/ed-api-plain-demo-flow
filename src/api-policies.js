@@ -279,7 +279,7 @@ const APIPoliciesDemo = () => {
   
   const resources = [
     { id: 'customer-data', name: 'Customer Data', icon: <Users size={20} /> },
-    { id: 'accounts', name: 'Accounts', icon: <Database size={20} /> },
+    { id: 'partners', name: 'Partners', icon: <Database size={20} /> },
     { id: 'system-settings', name: 'System Settings', icon: <Server size={20} /> }
   ];
   
@@ -291,7 +291,7 @@ const APIPoliciesDemo = () => {
       
       let allowed = hasPermission;
       
-      if (selectedResource === 'accounts' && selectedUser.role !== 'Wealth Manager' && selectedUser.role !== 'Administrator') {
+      if (selectedResource === 'partners' && selectedUser.role !== 'Wealth Manager' && selectedUser.role !== 'Administrator') {
         allowed = false;
       }
       
@@ -735,13 +735,13 @@ X-Actions: ${selectedActions.join(',')}`}
                   </div>
                 </div>
                 
-                {selectedResource === 'accounts' && (
+                {selectedResource === 'partners' && (
                   <div className="p-3 bg-white rounded-lg border border-red-100 flex items-center shadow-sm transition-all duration-300 hover:shadow-md hover:border-red-300">
                     <div className="mr-3 text-red-600 bg-red-100 p-2 rounded-full">
                       <AlertCircle className="h-5 w-5" />
                     </div>
                     <div className="text-sm">
-                      <strong>Special Policy:</strong> Accounts require Wealth Manager or Administrator role
+                      <strong>Special Policy:</strong> Partners require Wealth Manager or Administrator role
                     </div>
                   </div>
                 )}
