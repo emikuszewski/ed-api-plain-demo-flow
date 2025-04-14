@@ -165,7 +165,7 @@ const APIPoliciesDemo = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [selectedResource, setSelectedResource] = useState('customer-data');
+  const [selectedResource, setSelectedResource] = useState('accounts');
   const [selectedActions, setSelectedActions] = useState([]);
   
   // Load data on component mount
@@ -278,7 +278,7 @@ const APIPoliciesDemo = () => {
   ];
   
   const resources = [
-    { id: 'customer-data', name: 'Customer Data', icon: <Users size={20} /> },
+    { id: 'accounts', name: 'Accounts', icon: <Users size={20} /> },
     { id: 'partners', name: 'Partners', icon: <Database size={20} /> },
     { id: 'system-settings', name: 'System Settings', icon: <Server size={20} /> }
   ];
