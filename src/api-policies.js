@@ -58,6 +58,22 @@ const mockUsers = [
 
 const mockActions = ['READ', 'WRITE', 'DELETE', 'CREATE', 'UPDATE', 'APPROVE', 'REJECT'];
 
+// Action display mapping for UI
+const actionDisplayNames = {
+  'READ': 'READ (View)',
+  'WRITE': 'WRITE (Edit)',
+  'DELETE': 'DELETE (Close)',
+  'CREATE': 'CREATE (Trade)',
+  'UPDATE': 'UPDATE (Edit)',
+  'APPROVE': 'APPROVE (Transfer Money)',
+  'REJECT': 'REJECT'
+};
+
+// Function to get display name for an action
+const getActionDisplayName = (action) => {
+  return actionDisplayNames[action] || action;
+};
+
 // ========== API SERVICE FUNCTIONS ==========
 // Fetches users from either mock data or real API based on USE_REAL_API toggle
 const fetchUsers = async () => {
@@ -616,7 +632,7 @@ const APIPoliciesDemo = () => {
                       }`}>
                         {selectedActions.includes(action) && <Check className="h-4 w-4 text-white" />}
                       </div>
-                      <div className="font-medium text-emerald-900">{action}</div>
+                      <div className="font-medium text-emerald-900">{getActionDisplayName(action)}</div>
                     </div>
                   ))}
                 </div>
@@ -682,7 +698,7 @@ X-Actions: ${selectedActions.join(',')}`}
                 <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 bg-white p-3 rounded-lg shadow-lg border border-blue-200 transition-all duration-300 hover:shadow-xl">
                   <div className="flex items-center text-sm">
                     <Key className="mr-2 h-5 w-5 text-emerald-600" />
-                    <span className="font-medium">Actions: <strong>{selectedActions.join(', ')}</strong></span>
+                    <span className="font-medium">Actions: <strong>{selectedActions.map(action => getActionDisplayName(action)).join(', ')}</strong></span>
                   </div>
                 </div>
                 
@@ -713,7 +729,7 @@ X-Actions: ${selectedActions.join(',')}`}
                     <Users className="h-5 w-5" />
                   </div>
                   <div className="text-sm">
-                    User <strong>{selectedUser ? selectedUser.name : ''}</strong> has role <strong>{selectedUser ? selectedUser.role : ''}</strong> with permissions: <strong>{selectedUser ? selectedUser.permissions.join(', ') : ''}</strong>
+                    User <strong>{selectedUser ? selectedUser.name : ''}</strong> has role <strong>{selectedUser ? selectedUser.role : ''}</strong> with permissions: <strong>{selectedUser ? selectedUser.permissions.map(perm => getActionDisplayName(perm)).join(', ') : ''}</strong>
                   </div>
                 </div>
                 
@@ -722,7 +738,7 @@ X-Actions: ${selectedActions.join(',')}`}
                     <Key className="h-5 w-5" />
                   </div>
                   <div className="text-sm">
-                    Selected actions: <strong>{selectedActions.join(', ')}</strong>
+                    Selected actions: <strong>{selectedActions.map(action => getActionDisplayName(action)).join(', ')}</strong>
                   </div>
                 </div>
                 
@@ -823,7 +839,7 @@ X-Actions: ${selectedActions.join(',')}`}
                               }`}>
                                 {detail.allowed ? <Check className="h-5 w-5" /> : <X className="h-5 w-5" />}
                               </div>
-                              <span className="font-medium">{detail.action}</span>
+                              <span className="font-medium">{getActionDisplayName(detail.action)}</span>
                             </div>
                             <span className={`text-sm font-medium ${
                               detail.allowed ? 'text-emerald-600' : 'text-red-600'
@@ -964,7 +980,9 @@ X-Actions: ${selectedActions.join(',')}`}
                       <div className="text-sm font-medium bg-violet-50 p-2 rounded transition-all duration-300 hover:bg-violet-100">{selectedResource}</div>
                       
                       <div className="text-sm text-slate-600 font-medium">Actions:</div>
-                      <div className="text-sm font-medium bg-emerald-50 p-2 rounded transition-all duration-300 hover:bg-emerald-100">{selectedActions.join(', ')}</div>
+                      <div className="text-sm font-medium bg-emerald-50 p-2 rounded transition-all duration-300 hover:bg-emerald-100">
+                        {selectedActions.map(action => getActionDisplayName(action)).join(', ')}
+                      </div>
                       
                       <div className="text-sm text-slate-600 font-medium">Decision:</div>
                       <div className={`text-sm font-medium p-2 rounded transition-all duration-300 hover:scale-105 ${
