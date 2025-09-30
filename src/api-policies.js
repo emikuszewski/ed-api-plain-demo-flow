@@ -85,6 +85,7 @@ const ACTION_DISPLAY_NAMES = {
 const RESOURCES = [
   { id: 'accounts', name: 'Accounts', icon: Users, color: 'indigo', description: 'Client account management' },
   { id: 'partners', name: 'Partners', icon: Database, color: 'purple', description: 'Partner relationships' },
+  { id: 'transactions', name: 'Transactions', icon: Activity, color: 'emerald', description: 'Transaction history' },
   { id: 'system-settings', name: 'System Settings', icon: Server, color: 'amber', description: 'System configuration' }
 ];
 
@@ -656,6 +657,14 @@ const APIPoliciesDemo = () => {
         allowed = false;
       }
       
+      if (selectedResource === 'transactions') {
+        if (selectedUser.role === 'Wealth Manager') {
+          allowed = action === 'READ';
+        } else if (selectedUser.role !== 'Administrator') {
+          allowed = false;
+        }
+      }
+      
       return { action, allowed };
     });
     
@@ -820,6 +829,13 @@ const APIPoliciesDemo = () => {
                     <div className="bg-red-50 border border-red-200 p-4 rounded-lg flex items-center">
                       <AlertCircle className="mr-3 h-5 w-5 text-red-600" />
                       <span className="text-red-800">System Settings require Administrator role</span>
+                    </div>
+                  )}
+                  
+                  {selectedResource === 'transactions' && selectedUser?.role === 'Wealth Manager' && (
+                    <div className="bg-amber-50 border border-amber-200 p-4 rounded-lg flex items-center">
+                      <AlertCircle className="mr-3 h-5 w-5 text-amber-600" />
+                      <span className="text-amber-800">Transactions are VIEW-ONLY for Wealth Managers. Only READ actions are permitted</span>
                     </div>
                   )}
                 </div>
