@@ -46,7 +46,7 @@ const MOCK_USERS = [
     role: 'Wealth Manager', 
     email: 'sara.jameson@example.com',
     department: 'Finance',
-    permissions: ['READ', 'WRITE', 'CREATE', 'UPDATE'],
+    permissions: ['READ', 'WRITE', 'CREATE', 'UPDATE', 'APPROVE', 'OPEN'],
     avatar: '👩‍💼'
   },
   { 
@@ -55,7 +55,7 @@ const MOCK_USERS = [
     role: 'Wealth Manager', 
     email: 'emma.wilson@example.com',
     department: 'Finance',
-    permissions: ['READ', 'WRITE', 'CREATE'],
+    permissions: ['READ', 'WRITE', 'CREATE', 'UPDATE', 'APPROVE', 'OPEN'],
     avatar: '👩'
   },
   { 
@@ -69,7 +69,7 @@ const MOCK_USERS = [
   }
 ];
 
-const MOCK_ACTIONS = ['READ', 'WRITE', 'DELETE', 'CREATE', 'UPDATE', 'APPROVE', 'REJECT'];
+const MOCK_ACTIONS = ['READ', 'WRITE', 'DELETE', 'CREATE', 'UPDATE', 'APPROVE', 'REJECT', 'OPEN'];
 
 const ACTION_DISPLAY_NAMES = {
   'READ': { name: 'View', icon: '👁️', description: 'View resource data' },
@@ -77,8 +77,9 @@ const ACTION_DISPLAY_NAMES = {
   'DELETE': { name: 'Close', icon: '🗑️', description: 'Remove resources' },
   'CREATE': { name: 'Trade', icon: '💼', description: 'Create new trades' },
   'UPDATE': { name: 'Update', icon: '🔄', description: 'Update information' },
-  'APPROVE': { name: 'Transfer', icon: '💸', description: 'Approve transfers' },
-  'REJECT': { name: 'Reject', icon: '❌', description: 'Reject requests' }
+  'APPROVE': { name: 'Transfer Money', icon: '💸', description: 'Approve transfers' },
+  'REJECT': { name: 'Reject', icon: '❌', description: 'Reject requests' },
+  'OPEN': { name: 'Open', icon: '🔓', description: 'Open accounts' }
 };
 
 const RESOURCES = [
