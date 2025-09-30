@@ -22,7 +22,7 @@ export const mockUsers = [
     role: 'Wealth Manager', 
     email: 'sara.jameson@example.com',
     department: 'Finance',
-    permissions: ['READ', 'WRITE', 'CREATE', 'UPDATE'] 
+    permissions: ['READ', 'WRITE', 'CREATE', 'UPDATE', 'APPROVE', 'OPEN'] 
   },
   { 
     id: 4, 
@@ -30,7 +30,7 @@ export const mockUsers = [
     role: 'Wealth Manager', 
     email: 'emma.wilson@example.com',
     department: 'Finance',
-    permissions: ['READ', 'WRITE', 'CREATE'] 
+    permissions: ['READ', 'WRITE', 'CREATE', 'UPDATE', 'APPROVE', 'OPEN'] 
   },
   { 
     id: 5, 
@@ -42,7 +42,7 @@ export const mockUsers = [
   }
 ];
 
-export const mockActions = ['READ', 'WRITE', 'DELETE', 'CREATE', 'UPDATE', 'APPROVE', 'REJECT'];
+export const mockActions = ['READ', 'WRITE', 'DELETE', 'CREATE', 'UPDATE', 'APPROVE', 'REJECT', 'OPEN'];
 
 // Mock API fetch functions
 export const fetchMockUsers = () => {
